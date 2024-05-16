@@ -27,7 +27,7 @@ const borders = mesh(
 const localAuthorities = feature(englandLocalAuthoritiesTopo, englandLocalAuthoritiesTopo.objects['local-authorities'])
 
 const meta = {
-  title: 'Molecules/Map',
+  title: 'Molecules/Map/Static maps',
   component: Map,
   parameters: {
     viewport: {
