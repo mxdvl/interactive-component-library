@@ -1,4 +1,4 @@
-import { Map, MapConfiguration, MapLayers, Projection } from '.'
+import { Map, MapConfiguration, MapLayers, Projection, Controls } from '.'
 import { feature } from 'topojson-client'
 import ukCountriesTopo from './sample-data/UK-countries-topo.json'
 import styles from './stories.module.css'
@@ -85,6 +85,7 @@ export const UKMap = {
   render: (args) => (
     <Map {...args}>
       <MapLayers.Polygon features={[ukCountries]} fill="#707070" />
+      <Controls.Zoom />
     </Map>
   ),
 }

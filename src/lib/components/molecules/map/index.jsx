@@ -4,12 +4,14 @@ import { SVGMapProvider } from './context/SVGMapProvider'
 import { SVGRenderer } from './renderers/SVGRenderer'
 // import { CanvasMapProvider } from './context/CanvasMapProvider'
 // import { CanvasRenderer } from './renderers/CanvasRenderer'
-import { toChildArray, cloneElement } from 'preact'
+import { cloneElement } from 'preact'
 import { useRef, useMemo, useLayoutEffect, useState, useImperativeHandle } from 'preact/hooks'
 import { forwardRef } from 'preact/compat'
 import { useContainerSize } from '$shared/hooks/useContainerSize'
+import { useOrganisedChildren } from './hooks/useOrganisedChildren'
 import styles from './style.module.css'
 export * as MapLayers from './layers'
+export * as Controls from './controls'
 
 export const Projection = {
   geoAlbersUKComposite: geoAlbersUk(),
@@ -99,6 +101,8 @@ export const Map = forwardRef(
       return style
     }, [width, height])
 
+    const organisedChildren = useOrganisedChildren(children)
+
     const renderSVG = containerSize && !config.drawToCanvas
     // const renderCanvas = containerSize && config.drawToCanvas
 
@@ -116,7 +120,7 @@ export const Map = forwardRef(
             zoom={zoom}
           >
             <SVGRenderer>
-              {toChildArray(children).map((child, index) => cloneElement(child, { zIndex: index }))}
+              {organisedChildren.layers.map((child, index) => cloneElement(child, { zIndex: index }))}
             </SVGRenderer>
           </SVGMapProvider>
         )}
@@ -134,6 +138,9 @@ export const Map = forwardRef(
           <CanvasRenderer>{children}</CanvasRenderer>
         </CanvasMapProvider>
       )} */}
+        <div className={styles.controls}>
+          <div className={styles.zoomControl}>{organisedChildren.controls["ZoomControl"]}</div>
+        </div>
       </div>
     )
   },
