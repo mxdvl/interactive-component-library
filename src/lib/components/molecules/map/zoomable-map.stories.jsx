@@ -1,9 +1,15 @@
 import { Map, MapConfiguration, MapLayers, Projection, Controls } from '.'
 import { feature } from 'topojson-client'
-import ukCountriesTopo from './sample-data/UK-countries-topo.json'
+// import ukCountriesTopo from './sample-data/UK-countries-topo.json'
+import westminsterConstituenciesTopo from './sample-data/UK-constituencies-simplified-topo.json'
 import styles from './stories.module.css'
 
-const ukCountries = feature(ukCountriesTopo, ukCountriesTopo.objects['countries'])
+// const ukCountries = feature(ukCountriesTopo, ukCountriesTopo.objects['countries'])
+
+const constituencies = feature(
+  westminsterConstituenciesTopo,
+  westminsterConstituenciesTopo.objects['UK-constituencies'],
+)
 
 const meta = {
   title: 'Molecules/Map/Zoomable maps',
@@ -85,12 +91,12 @@ export const UKMap = {
       drawToCanvas: true,
     },
     zoom: {
-      enabled: true
-    }
+      enabled: true,
+    },
   },
   render: (args) => (
     <Map {...args}>
-      <MapLayers.Polygon features={[ukCountries]} fill="#707070" />
+      <MapLayers.Polygon features={[constituencies]} stroke="#707070" />
       <Controls.Zoom />
     </Map>
   ),

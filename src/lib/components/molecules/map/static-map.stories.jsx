@@ -313,28 +313,3 @@ export const UKLocator = {
     </Map>
   ),
 }
-
-// export const UKZoomable = {
-//   name: 'UK zoomable',
-//   args: {
-//     id: 'map',
-//     config: { ...Configuration.UKComposite, drawToCanvas: true },
-//     selectedFeature: signal(),
-//     zoom: {
-//       enabled: true,
-//     },
-//     drawToCanvas: true,
-//   },
-//   render: (args) => (
-//     <Map {...args}>
-//       <Layers.Polygon
-//         features={constituencies.features}
-//         styles={(_, index) => `fill-color--${parties[index % 4]}`}
-//         onClick={(_, d) => {
-//           args.selectedFeature.value = d
-//         }}
-//       />
-//       <Layers.Line features={[borders]} />
-//     </Map>
-//   ),
-// }

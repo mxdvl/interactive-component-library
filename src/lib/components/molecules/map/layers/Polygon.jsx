@@ -59,7 +59,9 @@ function PolygonCanvas({ context, features, fill, stroke, strokeWidth }) {
       ctx.strokeStyle = stroke
       ctx.fillStyle = fill
       path(feature)
-      ctx.fill()
+
+      if (fill) ctx.fill()
+      if (stroke) ctx.stroke()
     }
   }
 
