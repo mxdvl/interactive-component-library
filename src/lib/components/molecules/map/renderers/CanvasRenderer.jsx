@@ -2,7 +2,7 @@ import { useContext, useRef, useState, useEffect, useCallback } from 'preact/hoo
 import { select } from 'd3-selection'
 import { geoPath } from 'd3-geo'
 import { MapContext } from '../context/MapContext'
-// import { CompositionBorders } from '../layers/CompositionBorders'
+import { CompositionBorders } from '../layers/CompositionBorders'
 import { useZoom } from '../hooks/useZoom'
 import { useSignalEffect } from '@preact/signals'
 import { forwardRef } from 'preact/compat'
@@ -126,7 +126,8 @@ export const CanvasRenderer = forwardRef(({ children }, ref) => {
     >
       <MapContext.Provider value={canvasContext}>
         {children}
-        {/* <CompositionBorders /> */}
+        {context.config.drawCompositionBorders &&
+          Object.prototype.hasOwnProperty.call(context.config.projection, 'getCompositionBorders') && <CompositionBorders />}
       </MapContext.Provider>
     </canvas>
   )
