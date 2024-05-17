@@ -53,7 +53,7 @@ export const CanvasRenderer = forwardRef(({ children }, ref) => {
 
     for (const drawMapElement of drawingFunctions) {
       ctx.save()
-      drawMapElement(ctx, path)
+      drawMapElement(ctx, path, transform)
       ctx.restore()
     }
 

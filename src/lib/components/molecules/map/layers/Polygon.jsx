@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'preact/hooks'
+import { useContext, useEffect, useCallback } from 'preact/hooks'
 import { MapContext } from '../context/MapContext'
 import { dynamicPropValue } from '../helpers/dynamicPropValue'
 import { geoContains } from 'd3-geo'
@@ -52,18 +52,21 @@ export function Polygon({ id, features, fill = null, stroke = null, strokeWidth 
 }
 
 function PolygonCanvas({ context, features, fill, stroke, strokeWidth }) {
-  const draw = (ctx, path) => {
-    for (const feature of features) {
-      ctx.beginPath()
-      ctx.lineWidth = strokeWidth
-      ctx.strokeStyle = stroke
-      ctx.fillStyle = fill
-      path(feature)
+  
+  const draw = useCallback(
+    (ctx, path, transform) => {
+      for (const feature of features) {
+        ctx.beginPath()
+        ctx.lineWidth = strokeWidth / transform.k
+        ctx.strokeStyle = stroke
+        ctx.fillStyle = fill
+        path(feature)
 
-      if (fill) ctx.fill()
-      if (stroke) ctx.stroke()
-    }
-  }
+        if (fill) ctx.fill()
+        if (stroke) ctx.stroke()
+      }
+    },
+    [features, fill, stroke, strokeWidth])
 
   useEffect(() => {
     context.register(draw)
@@ -71,7 +74,7 @@ function PolygonCanvas({ context, features, fill, stroke, strokeWidth }) {
     return () => {
         context.unregister(draw)
     }
-  }, [])
+  }, [draw])
 
   useEffect(() => {
     context.invalidate()
