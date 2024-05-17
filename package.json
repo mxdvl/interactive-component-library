@@ -39,6 +39,7 @@
   "dependencies": {
     "d3-composite-projections": "^1.4.0",
     "dayjs": "^1.11.10",
+    "flatbush": "^4.4.0",
     "preact-transitioning": "^1.4.1"
   },
   "devDependencies": {
