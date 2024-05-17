@@ -5,6 +5,11 @@ import { geoContains } from 'd3-geo'
 
 export function Polygon({ id, features, fill = null, stroke = null, strokeWidth = 1, zIndex = 0, styles }) {
   const context = useContext(MapContext)
+  const { drawToCanvas } = context.config
+
+  if (drawToCanvas) {
+    return <PolygonCanvas context={context} features={features} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+  }
 
   useEffect(() => {
     function findFeatureAtPoint(point) {
@@ -27,41 +32,6 @@ export function Polygon({ id, features, fill = null, stroke = null, strokeWidth 
     }
   }, [context, zIndex, features])
 
-  // const { drawToCanvas } = context.config
-
-  // const draw = (ctx, path) => {
-  //   for (const feature of features) {
-  //     ctx.beginPath()
-  //     ctx.lineWidth = strokeWidth
-  //     ctx.strokeStyle = stroke
-  //     ctx.fillStyle = fill
-  //     path(feature)
-  //     ctx.fill()
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (context.config.drawToCanvas) {
-  //     context.register(draw)
-  //   }
-  //   return () => {
-  //     if (context.config.drawToCanvas) {
-  //       context.unregister(draw)
-  //     }
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
-
-  // useEffect(() => {
-  //   if (drawToCanvas) {
-  //     context.invalidate()
-  //   }
-  // }, [drawToCanvas, features, fill, stroke, strokeWidth])
-
-  // if (context.config.drawToCanvas) {
-  //   return '<!--Polygon layer-->'
-  // }
-
   return (
     <>
       {features.map((d, index) => {
@@ -79,4 +49,31 @@ export function Polygon({ id, features, fill = null, stroke = null, strokeWidth 
       })}
     </>
   )
+}
+
+function PolygonCanvas({ context, features, fill, stroke, strokeWidth }) {
+  const draw = (ctx, path) => {
+    for (const feature of features) {
+      ctx.beginPath()
+      ctx.lineWidth = strokeWidth
+      ctx.strokeStyle = stroke
+      ctx.fillStyle = fill
+      path(feature)
+      ctx.fill()
+    }
+  }
+
+  useEffect(() => {
+    context.register(draw)
+    
+    return () => {
+        context.unregister(draw)
+    }
+  }, [])
+
+  useEffect(() => {
+    context.invalidate()
+  }, [features, fill, stroke, strokeWidth])
+
+  return '<!--Polygon layer-->'
 }

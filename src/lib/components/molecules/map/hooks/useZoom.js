@@ -6,6 +6,8 @@ export function useZoom({ enabled, minZoom, maxZoom, extent }) {
   const [transform, setTransform] = useState(zoomIdentity)
 
   const zoomBehaviour = useMemo(() => {
+    if (!enabled) return null
+
     const zoomBehaviour = zoom()
       .scaleExtent([minZoom, maxZoom])
       .extent(extent) 
@@ -13,9 +15,7 @@ export function useZoom({ enabled, minZoom, maxZoom, extent }) {
         setTransform(event.transform)
       })
 
-    // setTransform(zoomBehaviour.transform())
-
-    return enabled && zoomBehaviour
+    return zoomBehaviour
   }, [enabled, minZoom, maxZoom, extent])
 
   const fitBounds = useCallback(

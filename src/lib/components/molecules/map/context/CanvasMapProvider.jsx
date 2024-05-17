@@ -46,6 +46,9 @@ export function CanvasMapProvider({ id, mapRef, width, height, padding, config, 
     extent: mapExtent,
     selectedFeature,
   }
+
+  mapRef.current = context
+  
   return <MapContext.Provider value={context}>{children}</MapContext.Provider>
 }
 

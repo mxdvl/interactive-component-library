@@ -80,7 +80,13 @@ export const UKMap = {
   name: 'UK outline',
   args: {
     id: 'map',
-    config: MapConfiguration.UKComposite,
+    config: {
+      ...MapConfiguration.UKComposite,
+      drawToCanvas: true,
+    },
+    zoom: {
+      enabled: true
+    }
   },
   render: (args) => (
     <Map {...args}>

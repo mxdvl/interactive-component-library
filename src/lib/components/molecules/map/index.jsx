@@ -2,8 +2,8 @@ import { geoAlbers, geoMercator } from 'd3-geo'
 import { geoAlbersUk } from 'd3-composite-projections'
 import { SVGMapProvider } from './context/SVGMapProvider'
 import { SVGRenderer } from './renderers/SVGRenderer'
-// import { CanvasMapProvider } from './context/CanvasMapProvider'
-// import { CanvasRenderer } from './renderers/CanvasRenderer'
+import { CanvasMapProvider } from './context/CanvasMapProvider'
+import { CanvasRenderer } from './renderers/CanvasRenderer'
 import { cloneElement } from 'preact'
 import { useRef, useMemo, useLayoutEffect, useState, useImperativeHandle } from 'preact/hooks'
 import { forwardRef } from 'preact/compat'
@@ -74,6 +74,7 @@ export const Map = forwardRef(
     zoom = Object.assign(DEFAULT_ZOOM, zoom)
 
     const containerRef = useRef()
+    const rendererRef = useRef()
     const [isReady, setIsReady] = useState(false)
     useLayoutEffect(() => {
       if (!isReady) {
@@ -104,7 +105,7 @@ export const Map = forwardRef(
     const organisedChildren = useOrganisedChildren(children)
 
     const renderSVG = containerSize && !config.drawToCanvas
-    // const renderCanvas = containerSize && config.drawToCanvas
+    const renderCanvas = containerSize && config.drawToCanvas
 
     return (
       <div ref={containerRef} className={styles.container} style={containerStyle}>
@@ -124,22 +125,27 @@ export const Map = forwardRef(
             </SVGRenderer>
           </SVGMapProvider>
         )}
-        {/* {renderCanvas && (
-        <CanvasMapProvider
-          id={id}
-          width={containerSize.width}
-          height={containerSize.height}
-          padding={padding}
-          config={config}
-          mapRef={mapRef}
-          selectedFeature={selectedFeature}
-          zoom={zoom}
-        >
-          <CanvasRenderer>{children}</CanvasRenderer>
-        </CanvasMapProvider>
-      )} */}
+        {renderCanvas && (
+          <CanvasMapProvider
+            id={id}
+            width={containerSize.width}
+            height={containerSize.height}
+            padding={padding}
+            config={config}
+            mapRef={mapRef}
+            selectedFeature={selectedFeature}
+            zoom={zoom}
+          >
+            <CanvasRenderer ref={rendererRef}>{children}</CanvasRenderer>
+          </CanvasMapProvider>
+        )}
         <div className={styles.controls}>
-          <div className={styles.zoomControl}>{organisedChildren.controls["ZoomControl"]}</div>
+          <div className={styles.zoomControl}>
+            {cloneElement(organisedChildren.controls['ZoomControl'], {
+              onZoomIn: () => rendererRef.current.zoomIn(),
+              onZoomOut: () => rendererRef.current.zoomOut(),
+            })}
+          </div>
         </div>
       </div>
     )

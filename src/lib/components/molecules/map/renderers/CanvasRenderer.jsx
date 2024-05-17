@@ -5,8 +5,9 @@ import { MapContext } from '../context/MapContext'
 // import { CompositionBorders } from '../layers/CompositionBorders'
 import { useZoom } from '../hooks/useZoom'
 import { useSignalEffect } from '@preact/signals'
+import { forwardRef } from 'preact/compat'
 
-export function CanvasRenderer({ children }) {
+export const CanvasRenderer = forwardRef(({ children }, ref) => {
   const canvasRef = useRef()
   const context = useContext(MapContext)
   const { zoomBehaviour, transform, fitBounds } = useZoom({
@@ -23,10 +24,9 @@ export function CanvasRenderer({ children }) {
   }, [context.projection])
 
   useEffect(() => {
-    if (canvasRef.current) {
+    if (canvasRef.current && zoomBehaviour) {
       const element = select(canvasRef.current)
       element.call(zoomBehaviour)
-      // zoomBehaviour.scaleBy(element, 2)
     }
   }, [canvasRef, zoomBehaviour])
 
@@ -51,16 +51,11 @@ export function CanvasRenderer({ children }) {
     ctx.lineJoin = 'round'
     ctx.lineCap = 'round'
 
-    // JUST FOR DEBUGGING
-    // drawHouse(ctx)
-
     for (const drawMapElement of drawingFunctions) {
       ctx.save()
       drawMapElement(ctx, path)
       ctx.restore()
     }
-
-    drawCircleAtPoint(ctx, { x: context.sizeInPixels.width / 2, y: context.sizeInPixels.height / 2 })
 
     ctx.restore()
 
@@ -100,12 +95,26 @@ export function CanvasRenderer({ children }) {
     setPendingUpdate(true)
   }
 
+  const zoomIn = useCallback(() => {
+    const element = select(canvasRef.current)
+    element.transition().duration(500).call(zoomBehaviour.scaleBy, 2)
+  })
+
+  const zoomOut = useCallback(() => {
+    const element = select(canvasRef.current)
+    element.transition().duration(500).call(zoomBehaviour.scaleBy, 0.5)
+  })
+
   const canvasContext = {
     ...context,
     register,
     unregister,
     invalidate,
+    zoomIn,
+    zoomOut,
   }
+
+  ref.current = canvasContext
 
   return (
     <canvas
@@ -121,34 +130,4 @@ export function CanvasRenderer({ children }) {
       </MapContext.Provider>
     </canvas>
   )
-}
-
-// function drawHouse(ctx) {
-//   // Set line width
-//   ctx.lineWidth = 10
-
-//   // Wall
-//   ctx.strokeRect(75, 140, 150, 110)
-
-//   // Door
-//   ctx.fillRect(130, 190, 40, 60)
-
-//   // Roof
-//   ctx.beginPath()
-//   ctx.moveTo(50, 140)
-//   ctx.lineTo(150, 60)
-//   ctx.lineTo(250, 140)
-//   ctx.closePath()
-//   ctx.stroke()
-// }
-
-function drawCircleAtPoint(ctx, point) {
-  ctx.save()
-
-  ctx.beginPath()
-  ctx.arc(point.x, point.y, 10, 0, 2 * Math.PI, false)
-  ctx.fillStyle = '#FF0000'
-  ctx.fill()
-
-  ctx.restore()
-}
+})
