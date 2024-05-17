@@ -76,9 +76,16 @@ export const Map = forwardRef(
     const containerRef = useRef()
     const rendererRef = useRef()
     const [isReady, setIsReady] = useState(false)
+
     useLayoutEffect(() => {
       if (!isReady) {
         setIsReady(true)
+      }
+
+      return () => {
+        if (isReady) {
+          setIsReady(false)
+        }
       }
     }, [isReady])
 
