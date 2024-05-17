@@ -113,6 +113,7 @@ export const CanvasRenderer = forwardRef(({ children }, ref) => {
 
   const canvasContext = {
     ...context,
+    path,
     register,
     unregister,
     invalidate,

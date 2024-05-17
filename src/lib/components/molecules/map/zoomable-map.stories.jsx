@@ -1,6 +1,7 @@
 import { Map, MapConfiguration, MapLayers, Projection, Controls } from '.'
 import { feature } from 'topojson-client'
 import { useRef, useState, useEffect, useCallback } from "preact/hooks"
+import { pointer } from 'd3-selection'
 // import ukCountriesTopo from './sample-data/UK-countries-topo.json'
 import westminsterConstituenciesTopo from './sample-data/UK-constituencies-simplified-topo.json'
 import styles from './stories.module.css'
@@ -107,42 +108,28 @@ export const UKMap = {
 function MapPreview(props) {
   const mapRef = useRef()
   const [mapContext, setMapContext] = useState()
-  const [selectedFeatureID, setSelectedFeatureID] = useState()
+  const [selectedFeature, setSelectedFeature] = useState()
 
    useEffect(() => {
      setMapContext(mapRef.current.getContext())
    }, [])
 
   function onMouseMove(event) {
-    const feature = mapContext.findFeatureAtPoint({ x: event.offsetX, y: event.offsetY })
-    if (feature) {
-      setSelectedFeatureID(feature.properties.id)
-    }
+    const point = pointer(event)
+    const feature = mapContext.findFeatureAtPoint(point)
+    setSelectedFeature(feature)
   }
 
-  const stroke = useCallback((feature) => {
-    // console.log('update stroke for feature', feature.properties.id)
-    if (selectedFeatureID && feature.properties.id === selectedFeatureID) {
-      return '#C70000'
-    }
-    return '#707070'
-  }, [selectedFeatureID])
+  function onMouseLeave() {
+    setSelectedFeature(null)
+  }
 
-  const strokeWidth = useCallback((feature) => {
-    if (selectedFeatureID && feature.properties.id === selectedFeatureID) {
-      return 2
-    }
-    return 1
-  }, [selectedFeatureID])
+  console.log('selected feature', selectedFeature?.properties.id)
 
   return (
-    <div onMouseMove={onMouseMove} style={{ width: '100%' }}>
+    <div onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} style={{ width: '100%' }}>
       <Map {...props} ref={mapRef}>
-        <MapLayers.Polygon
-          features={constituencies.features}
-          stroke={stroke}
-          strokeWidth={strokeWidth}
-        />
+        <MapLayers.Polygon features={constituencies.features} stroke="#707070" strokeWidth={1} />
         <Controls.Zoom />
       </Map>
     </div>

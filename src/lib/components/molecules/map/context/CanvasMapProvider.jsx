@@ -56,14 +56,11 @@ export function CanvasMapProvider({ id, mapRef, width, height, padding, config, 
   )
 
   const findFeatureAtPoint = useCallback(
-    ({ x, y }) => {
-      const adjustedPoint = [x - paddingInPixels.left, y - paddingInPixels.top]
-
-      for (const layer of layers.current) {
-        if (typeof layer.findFeatureAtPoint === 'function') {
-          const feature = layer.findFeatureAtPoint(adjustedPoint)
+    ([ x, y ]) => {
+      const topLayer = layers.current && layers.current[0]
+      if (topLayer && (typeof topLayer.findFeatureAtPoint === 'function')) {
+          const feature = topLayer.findFeatureAtPoint([x, y])
           if (feature) return feature
-        }
       }
       return null
     },
