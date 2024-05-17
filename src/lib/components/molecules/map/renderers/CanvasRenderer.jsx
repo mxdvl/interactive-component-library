@@ -19,7 +19,7 @@ export const CanvasRenderer = forwardRef(({ children }, ref) => {
   const [path, setPath] = useState()
 
   useEffect(() => {
-    const ctx = canvasRef.current?.getContext('2d')
+    const ctx = canvasRef.current?.getContext('2d', { alpha: false })
     setPath(() => geoPath(context.projection, ctx))
   }, [context.projection])
 
@@ -43,7 +43,13 @@ export const CanvasRenderer = forwardRef(({ children }, ref) => {
 
     ctx.save()
     ctx.clearRect(0, 0, context.sizeInPixels.width, context.sizeInPixels.height)
-    // console.log('transform.x', transform.x, 'transform.y', transform.y)
+
+    ctx.save()
+    // draw white bg
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0, 0, context.sizeInPixels.width, context.sizeInPixels.height)
+    ctx.restore()
+
     ctx.translate(transform.x, transform.y)
     ctx.scale(transform.k, transform.k)
 

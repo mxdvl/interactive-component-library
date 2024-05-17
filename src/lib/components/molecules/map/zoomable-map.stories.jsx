@@ -1,5 +1,6 @@
 import { Map, MapConfiguration, MapLayers, Projection, Controls } from '.'
 import { feature } from 'topojson-client'
+import { useRef, useState, useEffect, useCallback } from "preact/hooks"
 // import ukCountriesTopo from './sample-data/UK-countries-topo.json'
 import westminsterConstituenciesTopo from './sample-data/UK-constituencies-simplified-topo.json'
 import styles from './stories.module.css'
@@ -94,12 +95,58 @@ export const UKMap = {
       enabled: true,
     },
   },
-  render: (args) => (
-    <Map {...args}>
-      <MapLayers.Polygon features={[constituencies]} stroke="#707070" />
-      <Controls.Zoom />
-    </Map>
-  ),
+  render: (args) => <MapPreview {...args} />,
+  // render: (args) => (
+  //   <Map {...args}>
+  //     <MapLayers.Polygon features={[constituencies]} stroke="#707070" />
+  //     <Controls.Zoom />
+  //   </Map>
+  // ),
+}
+
+function MapPreview(props) {
+  const mapRef = useRef()
+  const [mapContext, setMapContext] = useState()
+  const [selectedFeatureID, setSelectedFeatureID] = useState()
+
+   useEffect(() => {
+     setMapContext(mapRef.current.getContext())
+   }, [])
+
+  function onMouseMove(event) {
+    const feature = mapContext.findFeatureAtPoint({ x: event.offsetX, y: event.offsetY })
+    if (feature) {
+      setSelectedFeatureID(feature.properties.id)
+    }
+  }
+
+  const stroke = useCallback((feature) => {
+    // console.log('update stroke for feature', feature.properties.id)
+    if (selectedFeatureID && feature.properties.id === selectedFeatureID) {
+      return '#C70000'
+    }
+    return '#707070'
+  }, [selectedFeatureID])
+
+  const strokeWidth = useCallback((feature) => {
+    if (selectedFeatureID && feature.properties.id === selectedFeatureID) {
+      return 2
+    }
+    return 1
+  }, [selectedFeatureID])
+
+  return (
+    <div onMouseMove={onMouseMove} style={{ width: '100%' }}>
+      <Map {...props} ref={mapRef}>
+        <MapLayers.Polygon
+          features={constituencies.features}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+        />
+        <Controls.Zoom />
+      </Map>
+    </div>
+  )
 }
 
 export default meta

@@ -1,4 +1,4 @@
-import { useMemo } from 'preact/hooks'
+import { useMemo, useRef, useCallback } from 'preact/hooks'
 import { bboxFeature } from '../helpers/bboxFeature'
 import { MapContext } from './MapContext'
 
@@ -27,6 +27,49 @@ export function CanvasMapProvider({ id, mapRef, width, height, padding, config, 
     return projection
   }, [mapExtent, config])
 
+  const layerSet = useRef(new Set())
+  const layers = useRef([])
+
+  const updateLayers = useCallback((layerSet) => {
+    const _layers = Array.from(layerSet.current)
+    // sort layers in reverse order (top layer first)
+    _layers.sort((a, b) => {
+      return b.zIndex - a.zIndex
+    })
+    layers.current = _layers
+  }, [])
+
+  const registerLayer = useCallback(
+    (layer) => {
+      layerSet.current.add(layer)
+      updateLayers(layerSet)
+    },
+    [updateLayers],
+  )
+
+  const unregisterLayer = useCallback(
+    (layer) => {
+      layerSet.current.delete(layer)
+      updateLayers(layerSet)
+    },
+    [updateLayers],
+  )
+
+  const findFeatureAtPoint = useCallback(
+    ({ x, y }) => {
+      const adjustedPoint = [x - paddingInPixels.left, y - paddingInPixels.top]
+
+      for (const layer of layers.current) {
+        if (typeof layer.findFeatureAtPoint === 'function') {
+          const feature = layer.findFeatureAtPoint(adjustedPoint)
+          if (feature) return feature
+        }
+      }
+      return null
+    },
+    [paddingInPixels],
+  )
+
   const context = {
     id,
     mapRef,
@@ -45,6 +88,9 @@ export function CanvasMapProvider({ id, mapRef, width, height, padding, config, 
     },
     extent: mapExtent,
     selectedFeature,
+    findFeatureAtPoint,
+    registerLayer,
+    unregisterLayer,
   }
 
   mapRef.current = context
