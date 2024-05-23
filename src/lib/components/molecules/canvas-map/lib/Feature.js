@@ -8,9 +8,15 @@ export class Feature {
 
     // create a unique ID for this feature
     this.uid = createUid()
+
+    this._projectedGeometry = null
   }
 
   getGeometry() {
     return this._geometries[0]
+  }
+
+  getProjectedGeometry(projection) {
+    return this.getGeometry().getProjected(projection)
   }
 }

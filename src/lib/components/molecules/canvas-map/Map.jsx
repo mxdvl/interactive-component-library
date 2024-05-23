@@ -15,11 +15,15 @@ export const Map = forwardRef(({ config, children }, ref) => {
       target: targetRef.current,
     })
     map.addLayers(layers)
-    console.log("map", map)
+    // console.log("create map", map)
 
     setMap(map)
 
     if (ref) ref.current = map
+
+    return () => {
+      setMap(null)
+    }
   }, [])
 
   const targetRef = useRef()

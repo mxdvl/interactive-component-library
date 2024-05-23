@@ -7,13 +7,15 @@ export class VectorLayerRenderer {
   }
 
   renderFrame(frameState, targetElement) {
-    console.log("render frame with state", frameState)
-
     const { transform } = frameState
-    const { projection, sizeInPixels, extent } = frameState.viewState
+    const { sizeInPixels, extent } = frameState.viewState
 
     const container = this.getOrCreateContainer(targetElement)
     const context = container.firstElementChild.getContext("2d")
+
+    // set size of canvas
+    context.canvas.width = sizeInPixels[0]
+    context.canvas.height = sizeInPixels[1]
 
     context.save()
     context.clearRect(0, 0, sizeInPixels[0], sizeInPixels[1])
@@ -31,7 +33,7 @@ export class VectorLayerRenderer {
 
     for (const feature of features) {
       context.save()
-      this.featureRenderer.render(feature, context, projection)
+      this.featureRenderer.render(frameState, feature, context)
       context.restore()
     }
 
@@ -65,8 +67,8 @@ export class VectorLayerRenderer {
     const canvas = document.createElement("canvas")
     style = canvas.style
     style.position = "absolute"
-    style.left = "0"
-    style.transformOrigin = "top left"
+    style.width = "100%"
+    style.height = "100%"
     container.appendChild(canvas)
 
     return container

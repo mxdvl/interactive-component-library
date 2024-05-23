@@ -16,15 +16,8 @@ export class View {
     this._viewPortSize = size
 
     if (!previousSize) {
-      // fit projection to extent when size is first set
       const mapSize = this.mapSize
-      this.projection.fitExtent(
-        [
-          [this.padding.left, this.padding.top],
-          [mapSize.width, mapSize.height],
-        ],
-        bboxFeature(this.extent),
-      )
+      this.projection.fitExtent([[this.padding.left, this.padding.top], mapSize], bboxFeature(this.extent))
     }
   }
 

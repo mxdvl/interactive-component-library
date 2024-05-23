@@ -34,7 +34,7 @@ export const Default = {
     const source = new GeoJSON(constituencies)
     const vectorLayer = new VectorLayer({ source })
     return (
-      <div style={{ height: 400 }}>
+      <div style={{ height: "80vh" }}>
         <Map {...args}>
           {{
             controls: [],
