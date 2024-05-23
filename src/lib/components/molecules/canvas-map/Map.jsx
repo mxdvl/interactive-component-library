@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "preact/hooks"
 import { forwardRef } from "preact/compat"
 import { Map as _Map } from "./lib/Map"
 import { View } from "./lib/View"
+import styles from "./style.module.css"
 
 export const Map = forwardRef(({ config, children }, ref) => {
   const { controls, layers } = children
@@ -23,5 +24,5 @@ export const Map = forwardRef(({ config, children }, ref) => {
 
   const targetRef = useRef()
 
-  return <div ref={targetRef} />
+  return <div ref={targetRef} className={styles.mapContainer} />
 })

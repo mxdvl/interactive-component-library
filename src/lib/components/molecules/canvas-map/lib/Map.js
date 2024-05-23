@@ -97,7 +97,7 @@ export class Map {
     const frameState = {
       size: this.size,
       viewState: this.view.getState(),
-      zoomTransform: this._zoomTransform,
+      transform: this._zoomTransform,
     }
 
     this._renderer.renderFrame(frameState)

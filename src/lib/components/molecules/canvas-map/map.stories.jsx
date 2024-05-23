@@ -32,14 +32,16 @@ export const Default = {
   render: (args) => {
     const constituencies = feature(westminsterConstituenciesTopo, westminsterConstituenciesTopo.objects["UK-constituencies"])
     const source = new GeoJSON(constituencies)
-    const vectorLayer = new VectorLayer(source)
+    const vectorLayer = new VectorLayer({ source })
     return (
-      <Map {...args}>
-        {{
-          controls: [],
-          layers: [vectorLayer],
-        }}
-      </Map>
+      <div style={{ height: 400 }}>
+        <Map {...args}>
+          {{
+            controls: [],
+            layers: [vectorLayer],
+          }}
+        </Map>
+      </div>
     )
   },
 }

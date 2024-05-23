@@ -1,3 +1,5 @@
+import { replaceChildren } from "../util/dom"
+
 export class MapRenderer {
   constructor(map) {
     this.map = map
@@ -14,6 +16,19 @@ export class MapRenderer {
   }
 
   renderFrame(frameState) {
-    console.log("render", frameState)
+    const layers = this.map.layers
+
+    const mapElements = []
+    let previousElement = null
+    for (const layer of layers) {
+      const element = layer.renderFrame(frameState, previousElement)
+
+      if (element !== previousElement) {
+        mapElements.push(element)
+        previousElement = element
+      }
+    }
+
+    replaceChildren(this._element, mapElements)
   }
 }

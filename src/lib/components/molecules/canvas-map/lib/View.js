@@ -37,9 +37,11 @@ export class View {
   }
 
   getState() {
+    const [[minX, minY], [maxX, maxY]] = this.extent
     return {
       projection: this.projection,
       sizeInPixels: scaleSize(this._viewPortSize, this.pixelRatio),
+      extent: [minX, minY, maxX, maxY],
     }
   }
 }
