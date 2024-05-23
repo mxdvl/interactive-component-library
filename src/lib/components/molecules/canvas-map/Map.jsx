@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "preact/hooks"
 import { forwardRef } from "preact/compat"
 import { Map as _Map } from "./lib/Map"
 import { View } from "./lib/View"
+import { ZoomControl } from "./controls"
 import styles from "./style.module.css"
 
 export const Map = forwardRef(({ config, children }, ref) => {
@@ -15,7 +16,6 @@ export const Map = forwardRef(({ config, children }, ref) => {
       target: targetRef.current,
     })
     map.addLayers(layers)
-    // console.log("create map", map)
 
     setMap(map)
 
@@ -28,5 +28,11 @@ export const Map = forwardRef(({ config, children }, ref) => {
 
   const targetRef = useRef()
 
-  return <div ref={targetRef} className={styles.mapContainer} />
+  return (
+    <div ref={targetRef} className={styles.mapContainer}>
+      <div className={styles.zoomControl}>
+        <ZoomControl onZoomIn={() => map.zoomIn()} onZoomOut={() => map.zoomOut()} />
+      </div>
+    </div>
+  )
 })

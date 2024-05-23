@@ -1,6 +1,7 @@
 import { Map, Projection, GeoJSON, VectorLayer } from "."
 import { feature } from "topojson-client"
-import westminsterConstituenciesTopo from "./sample-data/UK-constituencies-simplified-topo.json"
+// import westminsterConstituenciesTopo from "./sample-data/UK-constituencies-simplified-topo.json"
+import westminsterConstituenciesTopo from "./sample-data/uk-westminster.json"
 
 const meta = {
   title: "Molecules/CanvasMap",
@@ -23,14 +24,14 @@ export const Default = {
           [-8.642194417322951, 49.88234469492934],
           [1.7683086664999994, 60.8456995072],
         ],
-        minZoom: 8,
-        maxZoom: 14,
+        minZoom: 1,
+        maxZoom: 17,
         padding: { top: 20, right: 20, bottom: 20, left: 20 },
       },
     },
   },
   render: (args) => {
-    const constituencies = feature(westminsterConstituenciesTopo, westminsterConstituenciesTopo.objects["UK-constituencies"])
+    const constituencies = feature(westminsterConstituenciesTopo, westminsterConstituenciesTopo.objects["uk-westminster"])
     const source = new GeoJSON(constituencies)
     const vectorLayer = new VectorLayer({ source })
     return (

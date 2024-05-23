@@ -2,6 +2,7 @@ import { hasArea } from "./util/size"
 import { arrayEquals } from "./util/array"
 import { MapRenderer } from "./renderers/MapRenderer"
 import { zoom, zoomIdentity } from "d3-zoom"
+import { select } from "d3-selection"
 
 export class Map {
   constructor(options) {
@@ -27,8 +28,28 @@ export class Map {
 
     // Create d3-zoom object to allow panning and zooming
     this._zoomTransform = zoomIdentity
-    this._zoomBehaviour = zoom().scaleExtent(this.view.scaleExtent).on("zoom", this._onZoom)
+    this._zoomBehaviour = zoom()
+      .scaleExtent(this.view.scaleExtent)
+      .on("zoom", (event) => {
+        this._zoomTransform = event.transform
+        this._requestRender()
+      })
+
+    // Add zoom behaviour to viewport
+    select(this._viewport).call(this._zoomBehaviour)
   }
+
+  /** PUBLIC GETTERS */
+
+  get size() {
+    return this._size
+  }
+
+  get viewPort() {
+    return this._viewport
+  }
+
+  /** PUBLIC METHODS */
 
   addLayer(layer) {
     this.layers.push(layer)
@@ -38,13 +59,15 @@ export class Map {
     this.layers = this.layers.concat(layers)
   }
 
-  get size() {
-    return this._size
+  zoomIn() {
+    select(this._viewport).transition().duration(500).call(this._zoomBehaviour.scaleBy, 2)
   }
 
-  get viewPort() {
-    return this._viewport
+  zoomOut() {
+    select(this._viewport).transition().duration(500).call(this._zoomBehaviour.scaleBy, 0.5)
   }
+
+  /** PRIVATE METHODS */
 
   _updateSize() {
     const targetElement = this.target
@@ -102,9 +125,5 @@ export class Map {
 
     this._renderer.renderFrame(frameState)
     this._animationFrameRequestID = null
-  }
-
-  _onZoom(event) {
-    this._zoomTransform = event.transform
   }
 }
