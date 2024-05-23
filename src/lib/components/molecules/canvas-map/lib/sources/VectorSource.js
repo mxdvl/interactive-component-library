@@ -10,8 +10,7 @@ export class VectorSource {
     // create spatial index
     let index = new Flatbush(features.length)
     for (const feature of features) {
-      const geometry = feature.getGeometry()
-      const [minX, minY, maxX, maxY] = geometry.extent
+      const [minX, minY, maxX, maxY] = feature.getExtent()
       index.add(Math.floor(minX), Math.floor(minY), Math.ceil(maxX), Math.ceil(maxY))
     }
     index.finish()

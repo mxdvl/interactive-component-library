@@ -1,6 +1,5 @@
 import { Map, Projection, GeoJSON, VectorLayer } from "."
 import { feature } from "topojson-client"
-// import westminsterConstituenciesTopo from "./sample-data/UK-constituencies-simplified-topo.json"
 import westminsterConstituenciesTopo from "./sample-data/uk-westminster.json"
 
 const meta = {

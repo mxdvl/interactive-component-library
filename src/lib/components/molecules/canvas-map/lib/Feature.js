@@ -1,9 +1,10 @@
 import { createUid } from "./util/uid"
+import { combineExtents } from "./util/extent"
 
 export class Feature {
   constructor({ id, geometries, properties }) {
     this.id = id
-    this._geometries = geometries
+    this.geometries = geometries
     this.properties = properties
 
     // create a unique ID for this feature
@@ -12,11 +13,14 @@ export class Feature {
     this._projectedGeometry = null
   }
 
-  getGeometry() {
-    return this._geometries[0]
+  getExtent() {
+    return this.geometries.reduce((combinedExtent, geometry) => {
+      if (!combinedExtent) return geometry.extent
+      return combineExtents(geometry.extent, combinedExtent)
+    }, null)
   }
 
-  getProjectedGeometry(projection) {
-    return this.getGeometry().getProjected(projection)
+  getProjectedGeometries(projection) {
+    return this.geometries.map((d) => d.getProjected(projection))
   }
 }

@@ -35,21 +35,33 @@ export class GeoJSON extends VectorSource {
       console.warn("Encountered invalid feature object", geoJSONObject)
     }
 
-    const geometry = this.readGeometryFromObject(geoJSONObject["geometry"])
-    if (geometry) {
-      return new Feature({ id: geoJSONObject["id"], geometries: [geometry], properties: geoJSONObject["properties"] })
+    const geometries = this.readGeometryFromObject(geoJSONObject["geometry"])
+    if (geometries.length > 0) {
+      return new Feature({ id: geoJSONObject["id"], geometries, properties: geoJSONObject["properties"] })
     }
 
     return null
   }
 
   readGeometryFromObject(geometry) {
+    const geometries = []
     if (geometry.type === "Polygon") {
-      const flatCoordinates = geometry.coordinates.flat()
-      const extent = extentForCoordinates(flatCoordinates)
-      return new Polygon({ extent, coordinates: flatCoordinates })
+      const polygon = this.readPolygonForCoordinates(geometry.coordinates)
+      geometries.push(polygon)
+    } else if (geometry.type === "MultiPolygon") {
+      for (const polygonCoordinates of geometry.coordinates) {
+        const polygon = this.readPolygonForCoordinates(polygonCoordinates)
+        geometries.push(polygon)
+      }
     }
 
-    return null
+    return geometries
+  }
+
+  readPolygonForCoordinates(coordinates) {
+    // the first ring of a Polygon is always the outer ring
+    const outerRing = coordinates[0]
+    const extent = extentForCoordinates(outerRing)
+    return new Polygon({ extent, coordinates })
   }
 }

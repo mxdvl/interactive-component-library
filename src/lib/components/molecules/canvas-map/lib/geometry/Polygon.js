@@ -10,9 +10,19 @@ export class Polygon {
   }
 
   _getProjected(projection) {
+    const projected = []
+    const rings = this.coordinates
+    for (const ring of rings) {
+      const projectedRing = []
+      for (const point of ring) {
+        projectedRing.push(projection(point))
+      }
+      projected.push(projectedRing)
+    }
+
     return {
       type: this.type,
-      coordinates: [this.coordinates.map((point) => projection(point))],
+      coordinates: projected, //[this.coordinates.map((point) => projection(point))],
     }
   }
 }
