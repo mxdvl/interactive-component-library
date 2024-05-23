@@ -12,14 +12,15 @@ export class FeatureRenderer {
     this.drawingFunction.context(context)
 
     context.beginPath()
-    context.lineWidth = 1 / transform.k
+    context.lineWidth = 0.5 / transform.k
+    context.fillStyle = "white"
 
     const geometries = feature.getProjectedGeometries(projection)
     for (const geometry of geometries) {
       this.drawingFunction(geometry)
     }
 
-    // context.fill()
+    context.fill()
     context.stroke()
   }
 }

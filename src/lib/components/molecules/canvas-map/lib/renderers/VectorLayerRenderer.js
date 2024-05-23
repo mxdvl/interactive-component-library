@@ -8,7 +8,7 @@ export class VectorLayerRenderer {
 
   renderFrame(frameState, targetElement) {
     const { transform } = frameState
-    const { sizeInPixels, extent } = frameState.viewState
+    const { projection, sizeInPixels, extent } = frameState.viewState
 
     const container = this.getOrCreateContainer(targetElement)
     const context = container.firstElementChild.getContext("2d")
@@ -35,6 +35,14 @@ export class VectorLayerRenderer {
       context.save()
       this.featureRenderer.render(frameState, feature, context)
       context.restore()
+    }
+
+    if (Object.prototype.hasOwnProperty.call(projection, "getCompositionBorders")) {
+      context.beginPath()
+      context.lineWidth = 1 / transform.k
+      context.strokeStyle = "#999"
+      projection.drawCompositionBorders(context)
+      context.stroke()
     }
 
     context.restore()
