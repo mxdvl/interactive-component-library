@@ -63,7 +63,7 @@ export class VectorLayerRenderer {
     }
 
     if (!containerReused) {
-      // set size of canvas
+      // setting the size of the canvas also clears it
       const canvas = container.firstElementChild
       canvas.width = sizeInPixels[0]
       canvas.height = sizeInPixels[1]
