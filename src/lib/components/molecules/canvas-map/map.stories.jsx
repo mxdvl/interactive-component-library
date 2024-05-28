@@ -1,6 +1,7 @@
 import { Map, Projection, GeoJSON, VectorLayer } from "."
 import { feature } from "topojson-client"
-import westminsterConstituenciesTopo from "./sample-data/uk-westminster.json"
+// import westminsterConstituenciesTopo from "./sample-data/uk-westminster.json"
+import westminsterConstituenciesTopo from "./sample-data/uk-westminster-simplified.json"
 
 const meta = {
   title: "Molecules/CanvasMap",
