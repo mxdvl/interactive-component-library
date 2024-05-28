@@ -30,7 +30,6 @@
     --undeclared: #ededed;
 
     --new-group-01:#333333;
-    --new-group-02:#505050;
 
     --declared: #ffffff;
 
@@ -162,14 +161,6 @@
 .bg-color--declared {
     background-color: var(--declared) !important;
 }
-
-.bg-color--new-group-01 {
-  background-color: var(--new-group-01) !important;
-}
-.bg-color--new-group-02 {
-  background-color: var(--new-group-02) !important;
-}
-
 
 
 
@@ -395,5 +386,9 @@
         background-color: var(--undeclared) !important;
     }
 }
-
+.before-color--new-group-01 {
+  &:before {
+      background-color: var(--new-group-01) !important;
+  }
+}
 
