@@ -1,4 +1,4 @@
-import { Map, Projection, GeoJSON, VectorSource, VectorLayer, Style, Fill } from "."
+import { Map, Projection, GeoJSON, VectorSource, VectorLayer, Style, Fill, Stroke } from "."
 import { merge, mesh } from "topojson-client"
 // import westminsterConstituenciesTopo from "./sample-data/uk-westminster.json"
 import westminsterConstituenciesTopo from "./sample-data/uk-westminster-simplified.json"
@@ -35,7 +35,7 @@ export const Default = {
     const outlineSource = new VectorSource({ features: new GeoJSON().readFeaturesFromObject(outline) })
 
     const fillStyle = new Style({
-      fill: new Fill({ color: "#121212" }),
+      fill: new Fill({ color: "#f1f1f1" }),
     })
 
     const outlineLayer = new VectorLayer({ source: outlineSource, style: fillStyle })
@@ -44,7 +44,14 @@ export const Default = {
       return a.properties.name !== b.properties.name
     })
     const bordersSource = new VectorSource({ features: new GeoJSON().readFeaturesFromObject(constituencyBorders) })
-    const bordersLayer = new VectorLayer({ source: bordersSource })
+
+    const strokeStyle = new Style({
+      stroke: new Stroke({
+        color: "#121212",
+        width: 1,
+      }),
+    })
+    const bordersLayer = new VectorLayer({ source: bordersSource, style: strokeStyle })
     return (
       <div style={{ height: "80vh" }}>
         <Map {...args}>

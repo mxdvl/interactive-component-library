@@ -10,15 +10,10 @@ export class VectorLayerRenderer {
     const { transform } = frameState
     const { projection, sizeInPixels, extent } = frameState.viewState
 
-    const container = this.getOrCreateContainer(targetElement)
+    const container = this.getOrCreateContainer(targetElement, sizeInPixels)
     const context = container.firstElementChild.getContext("2d")
 
-    // set size of canvas
-    context.canvas.width = sizeInPixels[0]
-    context.canvas.height = sizeInPixels[1]
-
     context.save()
-    context.clearRect(0, 0, sizeInPixels[0], sizeInPixels[1])
 
     context.translate(transform.x, transform.y)
     context.scale(transform.k, transform.k)
@@ -51,23 +46,37 @@ export class VectorLayerRenderer {
     return container
   }
 
-  getOrCreateContainer(targetElement) {
+  getOrCreateContainer(targetElement, sizeInPixels) {
+    let container = null
+    let containerReused = false
     let canvas = targetElement && targetElement.firstElementChild
     if (canvas instanceof HTMLCanvasElement) {
-      // use container passed down from renderer
-      return targetElement
+      // use container from previously rendered layer
+      container = targetElement
+      containerReused = true
     } else if (this._container) {
       // reuse existing container for this layer
-      return this._container
+      container = this._container
+    } else {
+      // Create new container
+      container = this.createContainer()
     }
 
-    // Create new container
-    this._container = this.createContainer()
-    return this._container
+    if (!containerReused) {
+      // set size of canvas
+      const canvas = container.firstElementChild
+      canvas.width = sizeInPixels[0]
+      canvas.height = sizeInPixels[1]
+    }
+
+    this._container = container
+    return container
   }
 
   createContainer() {
     const container = document.createElement("div")
+    container.className = "gv-map-layer"
+
     let style = container.style
     style.position = "absolute"
     style.width = "100%"
