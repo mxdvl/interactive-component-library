@@ -1,15 +1,8 @@
-import { VectorSource } from "./VectorSource"
 import { Feature } from "../Feature"
 import { Polygon, LineString } from "../geometry"
 import { extentForCoordinates } from "../util/extent"
 
-export class GeoJSON extends VectorSource {
-  constructor(object) {
-    super()
-
-    this.setFeatures(this.readFeaturesFromObject(object))
-  }
-
+export class GeoJSON {
   readFeaturesFromObject(object) {
     const geoJSONObject = object
     let features = null

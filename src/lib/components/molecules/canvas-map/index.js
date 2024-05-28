@@ -1,4 +1,5 @@
 export * from "./Map"
 export * from "./lib/projection"
 export * from "./lib/layers/VectorLayer"
-export * from "./lib/sources/GeoJSON"
+export * from "./lib/sources/VectorSource"
+export * from "./lib/formats/GeoJSON"

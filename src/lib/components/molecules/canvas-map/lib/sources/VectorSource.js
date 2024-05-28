@@ -1,6 +1,10 @@
 import Flatbush from "flatbush"
 
 export class VectorSource {
+  constructor({ features }) {
+    this.setFeatures(features)
+  }
+
   getFeaturesInExtent(extent) {
     const [minX, minY, maxX, maxY] = extent
     return this._featuresRtree.search(minX, minY, maxX, maxY).map((i) => this._features[i])

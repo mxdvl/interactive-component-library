@@ -1,4 +1,4 @@
-import { Map, Projection, GeoJSON, VectorLayer } from "."
+import { Map, Projection, GeoJSON, VectorSource, VectorLayer } from "."
 import { feature, mesh } from "topojson-client"
 // import westminsterConstituenciesTopo from "./sample-data/uk-westminster.json"
 import westminsterConstituenciesTopo from "./sample-data/uk-westminster-simplified.json"
@@ -35,15 +35,14 @@ export const Default = {
     const constituencyBorders = mesh(westminsterConstituenciesTopo, westminsterConstituenciesTopo.objects["uk-westminster"], (a, b) => {
       return a.properties.name !== b.properties.name
     })
-    console.log("borders", constituencyBorders)
-    const source = new GeoJSON(constituencyBorders)
-    const vectorLayer = new VectorLayer({ source })
+    const bordersSource = new VectorSource({ features: new GeoJSON().readFeaturesFromObject(constituencyBorders) })
+    const bordersLayer = new VectorLayer({ source: bordersSource })
     return (
       <div style={{ height: "80vh" }}>
         <Map {...args}>
           {{
             controls: [],
-            layers: [vectorLayer],
+            layers: [bordersLayer],
           }}
         </Map>
       </div>
