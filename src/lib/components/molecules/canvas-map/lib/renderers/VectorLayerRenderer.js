@@ -33,6 +33,7 @@ export class VectorLayerRenderer {
 
     for (const feature of features) {
       context.save()
+      this.featureRenderer.setStyle(feature.style || this.layer.style)
       this.featureRenderer.render(frameState, feature, context)
       context.restore()
     }

@@ -2,10 +2,11 @@ import { createUid } from "./util/uid"
 import { combineExtents } from "./util/extent"
 
 export class Feature {
-  constructor({ id, geometries, properties }) {
+  constructor({ id, geometries, properties, style }) {
     this.id = id
     this.geometries = geometries
     this.properties = properties
+    this.style = style
 
     // create a unique ID for this feature
     this.uid = createUid()

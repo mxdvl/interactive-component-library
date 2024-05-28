@@ -1,5 +1,5 @@
-import { Map, Projection, GeoJSON, VectorSource, VectorLayer } from "."
-import { feature, mesh } from "topojson-client"
+import { Map, Projection, GeoJSON, VectorSource, VectorLayer, Style, Fill } from "."
+import { merge, mesh } from "topojson-client"
 // import westminsterConstituenciesTopo from "./sample-data/uk-westminster.json"
 import westminsterConstituenciesTopo from "./sample-data/uk-westminster-simplified.json"
 
@@ -31,7 +31,15 @@ export const Default = {
     },
   },
   render: (args) => {
-    // const constituencies = feature(westminsterConstituenciesTopo, westminsterConstituenciesTopo.objects["uk-westminster"])
+    const outline = merge(westminsterConstituenciesTopo, westminsterConstituenciesTopo.objects["uk-westminster"].geometries)
+    const outlineSource = new VectorSource({ features: new GeoJSON().readFeaturesFromObject(outline) })
+
+    const fillStyle = new Style({
+      fill: new Fill({ color: "#121212" }),
+    })
+
+    const outlineLayer = new VectorLayer({ source: outlineSource, style: fillStyle })
+
     const constituencyBorders = mesh(westminsterConstituenciesTopo, westminsterConstituenciesTopo.objects["uk-westminster"], (a, b) => {
       return a.properties.name !== b.properties.name
     })
@@ -42,7 +50,7 @@ export const Default = {
         <Map {...args}>
           {{
             controls: [],
-            layers: [bordersLayer],
+            layers: [outlineLayer, bordersLayer],
           }}
         </Map>
       </div>
