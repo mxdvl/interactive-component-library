@@ -1,47 +1,87 @@
-import { useState, useCallback, useMemo } from 'preact/hooks'
-import { Chevron } from '$particles'
-import styles from './style.module.css'
+import { useState, useCallback, useMemo } from "preact/hooks"
+import { Chevron } from "$particles"
+import styles from "./style.module.css"
 
-export function Dropdown({ title, hint, options, onSelect }) {
-  const [expanded, setExpanded] = useState(true)
+export function Dropdown({ title, hint, options, onSelect, collapseOnSelect = false, expandByDefault = true }) {
+  const [expanded, setExpanded] = useState(expandByDefault)
   const [selectedIndex, setSelectedIndex] = useState(0)
 
-  const onOptionClick = useCallback((option, index) => {
-    setSelectedIndex(index)
-    if (onSelect) onSelect(option, index)
-  }, [onSelect])
+  const onOptionClick = useCallback(
+    (option, index) => {
+      setSelectedIndex(index)
+      if (onSelect) onSelect(option, index)
+      if (collapseOnSelect) setExpanded(false)
+    },
+    [onSelect],
+  )
+
+  const optionGroups = useMemo(() => {
+    const containsOptionGroups = "options" in options[0]
+    if (!containsOptionGroups) {
+      // create single option group
+      return [{ options }]
+    }
+
+    // assign consecutive indices to options within groups
+    let optionIndex = 0
+    for (const group of options) {
+      for (const option of group.options) {
+        option.index = optionIndex
+        optionIndex++
+      }
+    }
+
+    return options
+  }, options)
+
+  const flatOptions = useMemo(() => {
+    return optionGroups.map((group) => group.options).flat()
+  }, [optionGroups])
 
   const iconForSelectedOption = useMemo(() => {
-    const selectedOption = options[selectedIndex]
+    const selectedOption = flatOptions[selectedIndex]
     return selectedOption.icon
-  }, [options, selectedIndex])
-  
+  }, [flatOptions, selectedIndex])
+
   return (
-    <div>
+    <div className={styles.container}>
       <button className={styles.button} onClick={() => setExpanded((current) => !current)}>
         <img src={iconForSelectedOption} className={styles.icon} />
         <span className={styles.title}>{title}</span>
-        <Chevron active={true} size="large" direction={expanded ? 'up' : 'down'} />
+        <Chevron active={true} size="large" direction={expanded ? "up" : "down"} />
       </button>
 
       <div className={styles.popout} style={{ visibility: expanded ? "visible" : "hidden" }}>
         {hint && <p className={styles.hint}>{hint}</p>}
-        {options.map((option, index) => (
-          <button key={option.title} className={styles.option} onClick={() => onOptionClick(option, index)}>
+        {optionGroups.map((group) => (
+          <OptionGroup {...group} selectedIndex={selectedIndex} onOptionClick={onOptionClick} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function OptionGroup({ title, options, selectedIndex, onOptionClick }) {
+  return (
+    <>
+      {title && <p className={styles.groupHeader}>{title}</p>}
+      {options.map((option) => {
+        return (
+          <button key={option.title} className={styles.option} onClick={() => onOptionClick(option, option.index)}>
             <img src={option.icon} className={styles.optionIcon} />
             <div className={styles.optionText}>
               <h4 className={styles.optionTitle}>{option.title}</h4>
               <p className={styles.optionDescription}>{option.description}</p>
             </div>
-            {index === selectedIndex && (
+            {option.index === selectedIndex && (
               <div className={styles.checkmark}>
                 <Checkmark />
               </div>
             )}
           </button>
-        ))}
-      </div>
-    </div>
+        )
+      })}
+    </>
   )
 }
 
