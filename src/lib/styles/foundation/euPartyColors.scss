@@ -5,7 +5,6 @@
     --left-01: #e3b0a3;
     --left-02: #bc634f;
     --sd: #C70000;
-    --sd-00:#ffffff;
     --sd-01:#fbb8a6;
     --sd-02:#e77054;
     --greenefa: #39A566;
@@ -29,6 +28,9 @@
     --other: #a0a0a0;
 
     --undeclared: #ededed;
+
+    --new-group-01:#333333;
+    --new-group-02:#505050;
 
     --declared: #ffffff;
 
@@ -61,6 +63,9 @@
 
     --ni: #A1A1A1;
     --other: #a0a0a0;
+
+    --new-group-01:#333333;
+    --new-group-02:#505050;
 
     --undeclared: #ededed;
 
@@ -157,6 +162,14 @@
 .bg-color--declared {
     background-color: var(--declared) !important;
 }
+
+.bg-color--new-group-01 {
+  background-color: var(--new-group-01) !important;
+}
+.bg-color--new-group-02 {
+  background-color: var(--new-group-02) !important;
+}
+
 
 
 
