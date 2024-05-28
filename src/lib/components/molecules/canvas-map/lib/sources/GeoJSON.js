@@ -1,6 +1,6 @@
 import { VectorSource } from "./VectorSource"
 import { Feature } from "../Feature"
-import { Polygon } from "../geometry/Polygon"
+import { Polygon, LineString } from "../geometry"
 import { extentForCoordinates } from "../util/extent"
 
 export class GeoJSON extends VectorSource {
@@ -24,18 +24,24 @@ export class GeoJSON extends VectorSource {
         }
         features.push(featureObject)
       }
-    } else {
+    } else if (geoJSONObject["type"] === "Feature") {
       features = [this.readFeatureFromObject(geoJSONObject)]
+    } else {
+      try {
+        const geometries = this.readGeometriesFromObject(geoJSONObject)
+        const feature = new Feature({ geometries })
+        features = [feature]
+      } catch (_) {
+        console.warn("Unable to interpret GeoJSON:", geoJSONObject)
+        return
+      }
     }
+
     return features.flat()
   }
 
   readFeatureFromObject(geoJSONObject) {
-    if (geoJSONObject["type"] !== "Feature") {
-      console.warn("Encountered invalid feature object", geoJSONObject)
-    }
-
-    const geometries = this.readGeometryFromObject(geoJSONObject["geometry"])
+    const geometries = this.readGeometriesFromObject(geoJSONObject["geometry"])
     if (geometries.length > 0) {
       return new Feature({ id: geoJSONObject["id"], geometries, properties: geoJSONObject["properties"] })
     }
@@ -43,7 +49,7 @@ export class GeoJSON extends VectorSource {
     return null
   }
 
-  readGeometryFromObject(geometry) {
+  readGeometriesFromObject(geometry) {
     const geometries = []
     if (geometry.type === "Polygon") {
       const polygon = this.readPolygonForCoordinates(geometry.coordinates)
@@ -52,6 +58,14 @@ export class GeoJSON extends VectorSource {
       for (const polygonCoordinates of geometry.coordinates) {
         const polygon = this.readPolygonForCoordinates(polygonCoordinates)
         geometries.push(polygon)
+      }
+    } else if (geometry.type === "LineString") {
+      const lineString = this.readLineStringForCoordinates(geometry.coordinates)
+      geometries.push(lineString)
+    } else if (geometry.type === "MultiLineString") {
+      for (const lineStringCoordinates of geometry.coordinates) {
+        const lineString = this.readLineStringForCoordinates(lineStringCoordinates)
+        geometries.push(lineString)
       }
     }
 
@@ -63,5 +77,10 @@ export class GeoJSON extends VectorSource {
     const outerRing = coordinates[0]
     const extent = extentForCoordinates(outerRing)
     return new Polygon({ extent, coordinates })
+  }
+
+  readLineStringForCoordinates(coordinates) {
+    const extent = extentForCoordinates(coordinates)
+    return new LineString({ extent, coordinates })
   }
 }
