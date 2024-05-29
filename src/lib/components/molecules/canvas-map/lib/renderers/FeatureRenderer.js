@@ -10,8 +10,7 @@ export class FeatureRenderer {
   }
 
   render(frameState, feature, context) {
-    const { transform } = frameState
-    const { projection } = frameState.viewState
+    const { projection, transform } = frameState.viewState
 
     this.drawingFunction.context(context)
 

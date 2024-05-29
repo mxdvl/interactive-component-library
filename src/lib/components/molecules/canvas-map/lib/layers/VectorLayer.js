@@ -18,6 +18,14 @@ export class VectorLayer {
     return defaultStyle
   }
 
+  getStyleFunction() {
+    const style = this.style
+    if (typeof style === "function") return style
+    return () => {
+      return style
+    }
+  }
+
   renderFrame(frameState, targetElement) {
     return this.renderer.renderFrame(frameState, targetElement)
   }

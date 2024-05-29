@@ -27,11 +27,11 @@ export class Map {
     this._resizeObserver.observe(this.target)
 
     // Create d3-zoom object to allow panning and zooming
-    this._zoomTransform = zoomIdentity
+    this.view.transform = zoomIdentity
     this._zoomBehaviour = zoom()
       .scaleExtent(this.view.scaleExtent)
       .on("zoom", (event) => {
-        this._zoomTransform = event.transform
+        this.view.transform = event.transform
         this._requestRender()
       })
 
@@ -124,7 +124,6 @@ export class Map {
     const frameState = {
       size: this.size,
       viewState: this.view.getState(),
-      transform: this._zoomTransform,
     }
 
     this._renderer.renderFrame(frameState)

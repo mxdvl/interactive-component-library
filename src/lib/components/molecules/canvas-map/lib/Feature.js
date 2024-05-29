@@ -24,4 +24,13 @@ export class Feature {
   getProjectedGeometries(projection) {
     return this.geometries.map((d) => d.getProjected(projection))
   }
+
+  getStyleFunction() {
+    const style = this.style
+    if (!style) return null
+    if (typeof style === "function") return style
+    return () => {
+      return style
+    }
+  }
 }

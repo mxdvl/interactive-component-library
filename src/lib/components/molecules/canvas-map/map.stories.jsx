@@ -1,5 +1,5 @@
 import { Map, Projection, GeoJSON, VectorSource, VectorLayer, Style, Fill, Stroke } from "."
-import { merge, mesh } from "topojson-client"
+import { feature, merge } from "topojson-client"
 // import westminsterConstituenciesTopo from "./sample-data/uk-westminster.json"
 import westminsterConstituenciesTopo from "./sample-data/uk-westminster-simplified.json"
 
@@ -40,24 +40,35 @@ export const Default = {
 
     const outlineLayer = new VectorLayer({ source: outlineSource, style: fillStyle })
 
-    const constituencyBorders = mesh(westminsterConstituenciesTopo, westminsterConstituenciesTopo.objects["uk-westminster"], (a, b) => {
-      return a.properties.name !== b.properties.name
-    })
-    const bordersSource = new VectorSource({ features: new GeoJSON().readFeaturesFromObject(constituencyBorders) })
-
     const strokeStyle = new Style({
       stroke: new Stroke({
-        color: "#121212",
+        color: "#999",
         width: 1,
       }),
     })
-    const bordersLayer = new VectorLayer({ source: bordersSource, style: strokeStyle })
+
+    const constituencies = feature(westminsterConstituenciesTopo, westminsterConstituenciesTopo.objects["uk-westminster"])
+    const constituenciesSource = new VectorSource({ features: new GeoJSON().readFeaturesFromObject(constituencies) })
+
+    const constituenciesLayer = new VectorLayer({
+      source: constituenciesSource,
+      style: (feature) => {
+        console.log("get style for feature", feature)
+        if (feature.properties.name === "North East Hertfordshire") {
+          return new Style({
+            fill: new Fill({ color: "#FF0000" }),
+          })
+        }
+        return strokeStyle
+      },
+    })
+
     return (
       <div style={{ height: "80vh" }}>
         <Map {...args}>
           {{
             controls: [],
-            layers: [outlineLayer, bordersLayer],
+            layers: [outlineLayer, constituenciesLayer],
           }}
         </Map>
       </div>

@@ -7,8 +7,7 @@ export class VectorLayerRenderer {
   }
 
   renderFrame(frameState, targetElement) {
-    const { transform } = frameState
-    const { projection, sizeInPixels, extent } = frameState.viewState
+    const { projection, sizeInPixels, extent, transform } = frameState.viewState
 
     const container = this.getOrCreateContainer(targetElement, sizeInPixels)
     const context = container.firstElementChild.getContext("2d")
@@ -28,7 +27,8 @@ export class VectorLayerRenderer {
 
     for (const feature of features) {
       context.save()
-      this.featureRenderer.setStyle(feature.style || this.layer.style)
+      const styleFunction = feature.getStyleFunction() || this.layer.getStyleFunction()
+      this.featureRenderer.setStyle(styleFunction(feature))
       this.featureRenderer.render(frameState, feature, context)
       context.restore()
     }

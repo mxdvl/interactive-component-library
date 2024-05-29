@@ -23,9 +23,25 @@ export class View {
     }
   }
 
+  get viewPortSize() {
+    return this._viewPortSize
+  }
+
+  set transform(transform) {
+    this._transform = transform
+  }
+
+  get transform() {
+    return {
+      k: this._transform.k,
+      x: this._transform.x * this.pixelRatio,
+      y: this._transform.y * this.pixelRatio,
+    }
+  }
+
   // map size in pixels (i.e. scaled by device pixel ratio)
   get mapSize() {
-    return sizeMinusPadding(scaleSize(this._viewPortSize, this.pixelRatio), this.padding)
+    return sizeMinusPadding(scaleSize(this.viewPortSize, this.pixelRatio), this.padding)
   }
 
   // padding in pixels (i.e. scaled by device pixel ratio)
@@ -41,8 +57,9 @@ export class View {
   getState() {
     const [[minX, minY], [maxX, maxY]] = this.extent
     return {
+      transform: this.transform,
       projection: this.projection,
-      sizeInPixels: scaleSize(this._viewPortSize, this.pixelRatio),
+      sizeInPixels: scaleSize(this.viewPortSize, this.pixelRatio),
       extent: [minX, minY, maxX, maxY],
     }
   }
