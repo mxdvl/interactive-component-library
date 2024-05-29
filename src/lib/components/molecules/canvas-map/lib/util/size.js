@@ -26,3 +26,16 @@ export function scaleSize(size, ratio, dest) {
   dest[1] = (size[1] * ratio + 0.5) | 0
   return dest
 }
+
+/**
+ * Returns padding object scaled by a ratio
+ */
+export function scalePadding(padding, ratio) {
+  const scaled = {
+    top: Math.round(padding.top * ratio),
+    right: Math.round(padding.top * ratio),
+    bottom: Math.round(padding.top * ratio),
+    left: Math.round(padding.left * ratio),
+  }
+  return scaled
+}

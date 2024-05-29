@@ -1,4 +1,4 @@
-import { sizeMinusPadding, scaleSize } from "./util/size"
+import { sizeMinusPadding, scaleSize, scalePadding } from "./util/size"
 import { bboxFeature } from "./util/bboxFeature"
 
 export class View {
@@ -7,7 +7,7 @@ export class View {
     this.extent = extent
     this.minZoom = minZoom
     this.maxZoom = maxZoom
-    this.padding = padding
+    this._padding = padding
     this.pixelRatio = window.devicePixelRatio
   }
 
@@ -17,12 +17,19 @@ export class View {
 
     if (!previousSize) {
       const mapSize = this.mapSize
-      this.projection.fitExtent([[this.padding.left, this.padding.top], mapSize], bboxFeature(this.extent))
+      const padding = this.padding
+      this.projection.fitExtent([[padding.left, padding.top], mapSize], bboxFeature(this.extent))
     }
   }
 
+  // map size in pixels (i.e. scaled by device pixel ratio)
   get mapSize() {
-    return sizeMinusPadding(this._viewPortSize, this.padding)
+    return sizeMinusPadding(scaleSize(this._viewPortSize, this.pixelRatio), this.padding)
+  }
+
+  // padding in pixels (i.e. scaled by device pixel ratio)
+  get padding() {
+    return scalePadding(this._padding, this.pixelRatio)
   }
 
   get scaleExtent() {
