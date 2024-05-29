@@ -4,6 +4,7 @@ import { bboxFeature } from "./util/bboxFeature"
 export class View {
   constructor({ projection, extent, minZoom, maxZoom, padding }) {
     this.projection = projection
+    // extent in projection coordinates
     this.extent = extent
     this.minZoom = minZoom
     this.maxZoom = maxZoom
@@ -32,6 +33,7 @@ export class View {
     return scalePadding(this._padding, this.pixelRatio)
   }
 
+  // defines the upper and lower limits for zoom behaviour
   get scaleExtent() {
     return [this.minZoom, this.maxZoom]
   }

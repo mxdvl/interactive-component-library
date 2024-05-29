@@ -108,6 +108,10 @@ export class Map {
       view.viewPortSize = size
     }
 
+    // constrain zoom to size of the viewport
+    this._zoomBehaviour.extent([[0, 0], size])
+    this._zoomBehaviour.translateExtent([[0, 0], size])
+
     this._requestRender()
   }
 
