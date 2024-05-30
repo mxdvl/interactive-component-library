@@ -1,6 +1,8 @@
 import { VectorLayerRenderer } from "../renderers/VectorLayerRenderer"
 import { Style, Stroke } from "../styles"
 import { combineExtents } from "../util/extent"
+import { Dispatcher } from "../events/dispatcher"
+import EventType from "../events/EventType"
 
 export class VectorLayer {
   constructor({ source, style, hitDetectionEnabled = true }) {
@@ -8,6 +10,11 @@ export class VectorLayer {
     this._style = style
     this.hitDetectionEnabled = hitDetectionEnabled
     this.renderer = new VectorLayerRenderer(this)
+    this.dispatcher = new Dispatcher(this)
+  }
+
+  tearDown() {
+    this.dispatcher = null
   }
 
   get style() {
@@ -18,6 +25,11 @@ export class VectorLayer {
       stroke: new Stroke(),
     })
     return defaultStyle
+  }
+
+  set style(style) {
+    this._style = style
+    this.dispatcher.dispatch(EventType.CHANGE)
   }
 
   getStyleFunction() {
@@ -43,11 +55,7 @@ export class VectorLayer {
 
   findFeatures(coordinate) {
     if (!this.hitDetectionEnabled) return
-
-    const features = this.source.getFeatures()
-    return features.filter((feature) => {
-      return feature.containsCoordinate(coordinate)
-    })
+    return this.source.getFeaturesAtCoordinate(coordinate)
   }
 
   renderFrame(frameState, targetElement) {

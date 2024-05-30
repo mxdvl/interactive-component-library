@@ -9,6 +9,11 @@ export class VectorSource {
     return this._features
   }
 
+  getFeaturesAtCoordinate(coordinate) {
+    const [lon, lat] = coordinate
+    return this._featuresRtree.neighbors(lon, lat, 1, Infinity, (i) => this._features[i].containsCoordinate(coordinate)).map((i) => this._features[i])
+  }
+
   getFeaturesInExtent(extent) {
     const [minX, minY, maxX, maxY] = extent
     return this._featuresRtree.search(minX, minY, maxX, maxY).map((i) => this._features[i])

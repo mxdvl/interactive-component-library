@@ -9,7 +9,8 @@ export class Polygon {
     this.getProjected = memoise(this._getProjected).bind(this)
   }
 
-  _getProjected(projection) {
+  // eslint-disable-next-line no-unused-vars
+  _getProjected(projection, _revision) {
     const projected = []
     const rings = this.coordinates
     for (const ring of rings) {

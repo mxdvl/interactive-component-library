@@ -4,6 +4,7 @@ import { containsCoordinate } from "./util/extent"
 import { MapRenderer } from "./renderers/MapRenderer"
 import { zoom, zoomIdentity } from "d3-zoom"
 import { select } from "d3-selection"
+import EventType from "./events/EventType"
 
 export class Map {
   constructor(options) {
@@ -53,12 +54,30 @@ export class Map {
 
   /** PUBLIC METHODS */
 
+  fitObject(geoJSON) {
+    this.view.fitObject(geoJSON)
+    this._requestRender()
+  }
+
   addLayer(layer) {
-    this.layers.push(layer)
+    this.addLayers([layer])
   }
 
   addLayers(layers) {
     this.layers = this.layers.concat(layers)
+
+    layers.forEach((layer) => {
+      layer.on(EventType.CHANGE, () => {
+        this._requestRender()
+      })
+    })
+  }
+
+  removeLayer(layer) {
+    layer.tearDown()
+    const layerIndex = this.layers.indexOf(layer)
+    if (layerIndex < 0) return
+    this.layers.splice(layerIndex, 1)
   }
 
   zoomIn() {
@@ -81,10 +100,14 @@ export class Map {
     // find map coordinate based on projection
     const mapCoordinate = projection.invert(untransformedPoint)
 
+    // console.log("find feature for", point[0], point[1], projection.invert(point)[1])
+    // console.log("and coordinate", mapCoordinate.toReversed())
+    // console.log("projected", projection.invert(point))
+
     const matchingFeatures = []
     for (const layer of this.layers) {
       const layerExtent = layer.getExtent()
-      if (containsCoordinate(layerExtent, mapCoordinate)) {
+      if (layer.hitDetectionEnabled && containsCoordinate(layerExtent, mapCoordinate)) {
         const features = layer.findFeatures(mapCoordinate)
         if (features) {
           matchingFeatures.push(...features)
@@ -93,6 +116,10 @@ export class Map {
     }
 
     return matchingFeatures
+  }
+
+  changed() {
+    this._requestRender()
   }
 
   /** PRIVATE METHODS */
@@ -149,6 +176,7 @@ export class Map {
   }
 
   _renderFrame() {
+    console.log("render frame")
     const frameState = {
       size: this.size,
       viewState: this.view.getState(),

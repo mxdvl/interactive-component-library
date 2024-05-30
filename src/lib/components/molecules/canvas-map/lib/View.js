@@ -4,6 +4,7 @@ import { ZoomTransform } from "d3-zoom"
 
 export class View {
   constructor({ projection, extent, minZoom, maxZoom, padding }) {
+    projection.revision = 0
     this.projection = projection
     // extent in projection coordinates
     this.extent = extent
@@ -17,10 +18,18 @@ export class View {
     const previousSize = this._viewPortSize
     this._viewPortSize = size
 
-    if (!previousSize) {
-      const mapSize = this.mapSize
-      const padding = this.scaledPadding
-      this.projection.fitExtent([[padding.left, padding.top], mapSize], bboxFeature(this.extent))
+    if (previousSize !== size) {
+      const [width, height] = this.mapSize
+      const { left, top } = this.scaledPadding
+
+      this.projection.fitExtent(
+        [
+          [left, top],
+          [width, height],
+        ],
+        bboxFeature(this.extent),
+      )
+      ++this.projection.revision
     }
   }
 
@@ -54,6 +63,21 @@ export class View {
   // defines the upper and lower limits for zoom behaviour
   get scaleExtent() {
     return [this.minZoom, this.maxZoom]
+  }
+
+  fitObject(geoJSON) {
+    const [width, height] = this.mapSize
+    const { left, top } = this.scaledPadding
+
+    this.projection.fitExtent(
+      [
+        [left, top],
+        [width, height],
+      ],
+      geoJSON,
+    )
+
+    ++this.projection.revision
   }
 
   getState() {
