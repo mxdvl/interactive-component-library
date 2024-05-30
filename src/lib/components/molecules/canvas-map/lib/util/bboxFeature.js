@@ -15,9 +15,9 @@ export function bboxFeature(bounds) {
       coordinates: [
         [
           [minLon, maxLat],
-          [maxLon, maxLat],
-          [maxLon, minLat],
           [minLon, minLat],
+          [maxLon, minLat],
+          [maxLon, maxLat],
           [minLon, maxLat],
         ],
       ],

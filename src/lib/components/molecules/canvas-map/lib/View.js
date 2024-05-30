@@ -1,5 +1,6 @@
 import { sizeMinusPadding, scaleSize, scalePadding } from "./util/size"
 import { bboxFeature } from "./util/bboxFeature"
+import { ZoomTransform } from "d3-zoom"
 
 export class View {
   constructor({ projection, extent, minZoom, maxZoom, padding }) {
@@ -18,7 +19,7 @@ export class View {
 
     if (!previousSize) {
       const mapSize = this.mapSize
-      const padding = this.padding
+      const padding = this.scaledPadding
       this.projection.fitExtent([[padding.left, padding.top], mapSize], bboxFeature(this.extent))
     }
   }
@@ -32,21 +33,22 @@ export class View {
   }
 
   get transform() {
-    return {
-      k: this._transform.k,
-      x: this._transform.x * this.pixelRatio,
-      y: this._transform.y * this.pixelRatio,
-    }
+    return new ZoomTransform(this._transform.k, this._transform.x * this.pixelRatio, this._transform.y * this.pixelRatio)
   }
 
   // map size in pixels (i.e. scaled by device pixel ratio)
   get mapSize() {
-    return sizeMinusPadding(scaleSize(this.viewPortSize, this.pixelRatio), this.padding)
+    return sizeMinusPadding(scaleSize(this.viewPortSize, this.pixelRatio), this.scaledPadding)
   }
 
   // padding in pixels (i.e. scaled by device pixel ratio)
   get padding() {
-    return scalePadding(this._padding, this.pixelRatio)
+    return this._padding
+  }
+
+  get scaledPadding() {
+    const scaledPadding = { ...this._padding }
+    return scalePadding(scaledPadding, this.pixelRatio)
   }
 
   // defines the upper and lower limits for zoom behaviour
@@ -57,6 +59,8 @@ export class View {
   getState() {
     const [[minX, minY], [maxX, maxY]] = this.extent
     return {
+      pixelRatio: this.pixelRatio,
+      padding: this.padding,
       transform: this.transform,
       projection: this.projection,
       sizeInPixels: scaleSize(this.viewPortSize, this.pixelRatio),

@@ -29,3 +29,29 @@ export function combineExtents(extent1, extent2) {
   const maxY = Math.max(extent1[3], extent2[3])
   return [minX, minY, maxX, maxY]
 }
+
+/**
+ * Check if the passed coordinate is contained or on the edge of the extent.
+ *
+ * @param {Extent} extent Extent.
+ * @param {import("./coordinate.js").Coordinate} coordinate Coordinate.
+ * @return {boolean} The coordinate is contained in the extent.
+ * @api
+ */
+
+export function containsCoordinate(extent, coordinate) {
+  return containsXY(extent, coordinate[0], coordinate[1])
+}
+
+/**
+ * Check if the passed coordinate is contained or on the edge of the extent.
+ *
+ * @param {Extent} extent Extent.
+ * @param {number} x X coordinate.
+ * @param {number} y Y coordinate.
+ * @return {boolean} The x, y values are contained in the extent.
+ * @api
+ */
+export function containsXY(extent, x, y) {
+  return extent[0] <= x && x <= extent[2] && extent[1] <= y && y <= extent[3]
+}

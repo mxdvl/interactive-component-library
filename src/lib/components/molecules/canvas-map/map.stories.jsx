@@ -46,14 +46,12 @@ export const Default = {
         width: 1,
       }),
     })
-
     const constituencies = feature(westminsterConstituenciesTopo, westminsterConstituenciesTopo.objects["uk-westminster"])
     const constituenciesSource = new VectorSource({ features: new GeoJSON().readFeaturesFromObject(constituencies) })
 
     const constituenciesLayer = new VectorLayer({
       source: constituenciesSource,
       style: (feature) => {
-        console.log("get style for feature", feature)
         if (feature.properties.name === "North East Hertfordshire") {
           return new Style({
             fill: new Fill({ color: "#FF0000" }),

@@ -1,11 +1,13 @@
 import { hasArea } from "./util/size"
 import { arrayEquals } from "./util/array"
+import { containsCoordinate } from "./util/extent"
 import { MapRenderer } from "./renderers/MapRenderer"
 import { zoom, zoomIdentity } from "d3-zoom"
 import { select } from "d3-selection"
 
 export class Map {
   constructor(options) {
+    this.options = options
     this.view = options.view
     this.target = options.target
     this.layers = []
@@ -65,6 +67,32 @@ export class Map {
 
   zoomOut() {
     select(this._viewport).transition().duration(500).call(this._zoomBehaviour.scaleBy, 0.5)
+  }
+
+  findFeatures(point) {
+    const { projection, pixelRatio, transform } = this.view.getState()
+
+    // scale for device pixel ratio
+    const scaledPoint = [point[0] * pixelRatio, point[1] * pixelRatio]
+
+    // invert zoom transformation
+    const untransformedPoint = transform.invert(scaledPoint)
+
+    // find map coordinate based on projection
+    const mapCoordinate = projection.invert(untransformedPoint)
+
+    const matchingFeatures = []
+    for (const layer of this.layers) {
+      const layerExtent = layer.getExtent()
+      if (containsCoordinate(layerExtent, mapCoordinate)) {
+        const features = layer.findFeatures(mapCoordinate)
+        if (features) {
+          matchingFeatures.push(...features)
+        }
+      }
+    }
+
+    return matchingFeatures
   }
 
   /** PRIVATE METHODS */

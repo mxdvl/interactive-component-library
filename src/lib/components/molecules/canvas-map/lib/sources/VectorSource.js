@@ -5,6 +5,10 @@ export class VectorSource {
     this.setFeatures(features)
   }
 
+  getFeatures() {
+    return this._features
+  }
+
   getFeaturesInExtent(extent) {
     const [minX, minY, maxX, maxY] = extent
     return this._featuresRtree.search(minX, minY, maxX, maxY).map((i) => this._features[i])

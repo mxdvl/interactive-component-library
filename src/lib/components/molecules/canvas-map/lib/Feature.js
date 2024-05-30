@@ -1,5 +1,6 @@
 import { createUid } from "./util/uid"
-import { combineExtents } from "./util/extent"
+import { combineExtents, containsCoordinate } from "./util/extent"
+import { geoContains } from "d3-geo"
 
 export class Feature {
   constructor({ id, geometries, properties, style }) {
@@ -15,10 +16,14 @@ export class Feature {
   }
 
   getExtent() {
-    return this.geometries.reduce((combinedExtent, geometry) => {
+    if (this._extent) return this._extent
+
+    const extent = this.geometries.reduce((combinedExtent, geometry) => {
       if (!combinedExtent) return geometry.extent
       return combineExtents(geometry.extent, combinedExtent)
     }, null)
+    this._extent = extent
+    return extent
   }
 
   getProjectedGeometries(projection) {
@@ -32,5 +37,19 @@ export class Feature {
     return () => {
       return style
     }
+  }
+
+  containsCoordinate(coordinate) {
+    if (!containsCoordinate(this.getExtent(), coordinate)) {
+      return false
+    }
+
+    for (const geometry of this.geometries) {
+      if (geoContains(geometry.getGeoJSON(), coordinate)) {
+        return true
+      }
+    }
+
+    return false
   }
 }

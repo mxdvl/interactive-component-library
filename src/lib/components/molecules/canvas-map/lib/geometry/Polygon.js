@@ -25,6 +25,13 @@ export class Polygon {
       coordinates: projected, //[this.coordinates.map((point) => projection(point))],
     }
   }
+
+  getGeoJSON() {
+    return {
+      type: this.type,
+      coordinates: this.coordinates,
+    }
+  }
 }
 
 // FIXME: implement simplification?
