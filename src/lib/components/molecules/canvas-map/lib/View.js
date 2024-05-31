@@ -80,15 +80,25 @@ export class View {
     ++this.projection.revision
   }
 
+  // visible extent in map coordinates
+  getVisibleExtent(transform, projection) {
+    const [width, height] = this.mapSize
+    const southWest = projection.invert(transform.invert([0, height]))
+    const northEast = projection.invert(transform.invert([width, 0]))
+    return [southWest[0], southWest[1], northEast[0], northEast[1]]
+  }
+
   getState() {
-    const [[minX, minY], [maxX, maxY]] = this.extent
+    const transform = this.transform
+    const projection = this.projection
+
     return {
+      transform,
+      projection,
       pixelRatio: this.pixelRatio,
       padding: this.padding,
-      transform: this.transform,
-      projection: this.projection,
       sizeInPixels: scaleSize(this.viewPortSize, this.pixelRatio),
-      extent: [minX, minY, maxX, maxY],
+      visibleExtent: this.getVisibleExtent(transform, projection),
     }
   }
 }

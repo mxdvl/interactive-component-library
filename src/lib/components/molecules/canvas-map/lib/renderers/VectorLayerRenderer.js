@@ -7,7 +7,7 @@ export class VectorLayerRenderer {
   }
 
   renderFrame(frameState, targetElement) {
-    const { projection, sizeInPixels, extent, transform } = frameState.viewState
+    const { projection, sizeInPixels, visibleExtent, transform } = frameState.viewState
 
     const container = this.getOrCreateContainer(targetElement, sizeInPixels)
     const context = container.firstElementChild.getContext("2d")
@@ -22,8 +22,7 @@ export class VectorLayerRenderer {
     context.lineCap = "round"
 
     const source = this.layer.source
-    // FIXME: this should be the current extent of the map, not the initial bounds
-    const features = source.getFeaturesInExtent(extent)
+    const features = source.getFeaturesInExtent(visibleExtent)
 
     for (const feature of features) {
       context.save()
