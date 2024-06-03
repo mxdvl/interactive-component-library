@@ -80,6 +80,31 @@ export class View {
     ++this.projection.revision
   }
 
+  invert(point) {
+    const { projection, pixelRatio, transform } = this.getState()
+
+    // scale for device pixel ratio
+    const scaledPoint = [point[0] * pixelRatio, point[1] * pixelRatio]
+
+    // invert zoom transformation
+    const untransformedPoint = transform.invert(scaledPoint)
+
+    // find map coordinate based on projection
+    const mapCoordinate = projection.invert(untransformedPoint)
+
+    return mapCoordinate
+  }
+
+  // bounds is defined as [[minX, minY], [maxX, maxY]]
+  invertBounds(bounds) {
+    const topLeft = bounds[0]
+    const topRight = [bounds[1][0], bounds[0][1]]
+    const bottomRight = [bounds[1][0], bounds[1][1]]
+    const bottomLeft = [bounds[0][0], bounds[1][1]]
+    const points = [topLeft, topRight, bottomRight, bottomLeft, topLeft]
+    return points.map((d) => this.invert(d))
+  }
+
   // visible extent in map coordinates
   getVisibleExtent(transform, projection) {
     const [width, height] = this.mapSize

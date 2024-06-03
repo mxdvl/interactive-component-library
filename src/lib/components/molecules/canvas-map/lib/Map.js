@@ -89,20 +89,8 @@ export class Map {
   }
 
   findFeatures(point) {
-    const { projection, pixelRatio, transform } = this.view.getState()
-
-    // scale for device pixel ratio
-    const scaledPoint = [point[0] * pixelRatio, point[1] * pixelRatio]
-
-    // invert zoom transformation
-    const untransformedPoint = transform.invert(scaledPoint)
-
     // find map coordinate based on projection
-    const mapCoordinate = projection.invert(untransformedPoint)
-
-    // console.log("find feature for", point[0], point[1], projection.invert(point)[1])
-    // console.log("and coordinate", mapCoordinate.toReversed())
-    // console.log("projected", projection.invert(point))
+    const mapCoordinate = this.view.invert(point)
 
     const matchingFeatures = []
     for (const layer of this.layers) {
@@ -176,7 +164,6 @@ export class Map {
   }
 
   _renderFrame() {
-    console.log("render frame")
     const frameState = {
       size: this.size,
       viewState: this.view.getState(),
