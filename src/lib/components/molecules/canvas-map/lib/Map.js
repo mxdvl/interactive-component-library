@@ -5,6 +5,7 @@ import { MapRenderer } from "./renderers/MapRenderer"
 import { zoom, zoomIdentity } from "d3-zoom"
 import { select } from "d3-selection"
 import EventType from "./events/EventType"
+import "d3-transition"
 
 export class Map {
   constructor(options) {
@@ -86,6 +87,19 @@ export class Map {
 
   zoomOut() {
     select(this._viewport).transition().duration(500).call(this._zoomBehaviour.scaleBy, 0.5)
+  }
+
+  zoomTo(feature, focalPoint) {
+    const extent = feature.getExtent()
+    const [[x, y], [width, height]] = this.view.boundsForExtent(extent)
+    const viewPortSize = this.view.viewPortSize
+
+    const newTransform = zoomIdentity
+      .translate(viewPortSize[0] / 2, viewPortSize[1] / 2)
+      .scale(Math.min(this.view.maxZoom, 0.9 * Math.min(viewPortSize[0] / width, viewPortSize[1] / height)))
+      .translate(-x - width / 2, -y - height / 2)
+
+    select(this._viewport).transition().duration(500).call(this._zoomBehaviour.transform, newTransform, focalPoint)
   }
 
   findFeatures(point) {

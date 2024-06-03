@@ -27,7 +27,9 @@ export class VectorLayerRenderer {
     for (const feature of features) {
       context.save()
       const styleFunction = feature.getStyleFunction() || this.layer.getStyleFunction()
-      this.featureRenderer.setStyle(styleFunction(feature))
+      const featureStyle = styleFunction(feature)
+      if (!featureStyle) continue
+      this.featureRenderer.setStyle(featureStyle)
       this.featureRenderer.render(frameState, feature, context)
       context.restore()
     }

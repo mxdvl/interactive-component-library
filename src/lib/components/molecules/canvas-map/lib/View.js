@@ -11,6 +11,7 @@ export class View {
     this.minZoom = minZoom
     this.maxZoom = maxZoom
     this._padding = padding
+    this._viewPortSize = [0, 0]
     this.pixelRatio = window.devicePixelRatio
   }
 
@@ -78,6 +79,19 @@ export class View {
     )
 
     ++this.projection.revision
+  }
+
+  boundsForExtent(extent) {
+    const SW = this.projection([extent[0], extent[1]])
+    const NE = this.projection([extent[2], extent[3]])
+    const minX = SW[0]
+    const minY = NE[1]
+    const maxX = NE[0]
+    const maxY = SW[1]
+    return [
+      [minX, minY],
+      [maxX - minX, maxY - minY],
+    ]
   }
 
   invert(point) {
