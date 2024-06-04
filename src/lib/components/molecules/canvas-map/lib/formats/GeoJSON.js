@@ -1,5 +1,5 @@
 import { Feature } from "../Feature"
-import { Polygon, LineString } from "../geometry"
+import { Polygon, LineString, Point } from "../geometry"
 import { extentForCoordinates } from "../util/extent"
 
 export class GeoJSON {
@@ -19,6 +19,9 @@ export class GeoJSON {
       }
     } else if (geoJSONObject["type"] === "Feature") {
       features = [this.readFeatureFromObject(geoJSONObject)]
+    } else if (Array.isArray(geoJSONObject)) {
+      console.log("read features from array", geoJSONObject)
+      features = geoJSONObject.map(this.readFeatureFromObject.bind(this))
     } else {
       try {
         const geometries = this.readGeometriesFromObject(geoJSONObject)
@@ -60,6 +63,9 @@ export class GeoJSON {
         const lineString = this.readLineStringForCoordinates(lineStringCoordinates)
         geometries.push(lineString)
       }
+    } else if (geometry.type === "Point") {
+      const point = this.readPointForCoordinates(geometry.coordinates)
+      geometries.push(point)
     }
 
     return geometries
@@ -75,5 +81,9 @@ export class GeoJSON {
   readLineStringForCoordinates(coordinates) {
     const extent = extentForCoordinates(coordinates)
     return new LineString({ extent, coordinates })
+  }
+
+  readPointForCoordinates(coordinates) {
+    return new Point({ coordinates })
   }
 }
