@@ -47,13 +47,10 @@ export class TextLayerRenderer {
 
       style.fontFamily = textStyle.fontFamily
       style.fontSize = textStyle.fontSize
+      style.fontWeight = textStyle.fontWeight
       style.lineHeight = textStyle.lineHeight
       style.color = textStyle.color
-      style.textShadow = "1px 1px 0px white, -1px -1px 0px white, -1px 1px 0px white, 1px -1px white"
-
-      if (feature.properties.minZoom !== 1) {
-        style.display = "none"
-      }
+      style.textShadow = textStyle.textShadow
 
       return textElement
     })

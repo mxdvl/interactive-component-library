@@ -20,8 +20,14 @@ export class GeoJSON {
     } else if (geoJSONObject["type"] === "Feature") {
       features = [this.readFeatureFromObject(geoJSONObject)]
     } else if (Array.isArray(geoJSONObject)) {
-      console.log("read features from array", geoJSONObject)
-      features = geoJSONObject.map(this.readFeatureFromObject.bind(this))
+      features = []
+      for (let i = 0, ii = geoJSONObject.length; i < ii; ++i) {
+        const featureObject = this.readFeatureFromObject(geoJSONObject[i])
+        if (!featureObject) {
+          continue
+        }
+        features.push(featureObject)
+      }
     } else {
       try {
         const geometries = this.readGeometriesFromObject(geoJSONObject)
