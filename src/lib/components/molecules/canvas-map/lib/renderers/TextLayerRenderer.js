@@ -1,6 +1,13 @@
 import { FeatureRenderer } from "./FeatureRenderer"
 import { replaceChildren } from "../util/dom"
 
+const textPadding = {
+  top: 20,
+  right: 20,
+  bottom: 20,
+  left: 20,
+}
+
 export class TextLayerRenderer {
   constructor(layer) {
     this.layer = layer
@@ -13,6 +20,7 @@ export class TextLayerRenderer {
     style.width = "100%"
     style.height = "100%"
     style.pointerEvents = "none"
+    style.overflow = "hidden"
   }
 
   renderFrame(frameState) {
@@ -49,16 +57,19 @@ export class TextLayerRenderer {
       // apply style to text element
       this.styleTextElement(textElement, featureStyle.text, position)
 
-      const bbox = this.getElementBBox(textElement, { x, y })
-
       // skip item if it collides with existing elements
+      const bbox = this.getElementBBox(textElement, { x, y })
       if (declutterTree.collides(bbox)) {
-        console.log("element collides, skip it")
         continue
       }
 
       // add element to declutter tree to prevent collisions
       declutterTree.insert(bbox)
+
+      if (this.layer.drawCollisionBoxes) {
+        const collisionBoxDebugElement = this.getCollisionBoxElement(bbox)
+        textElements.push(collisionBoxDebugElement)
+      }
 
       textElements.push(textElement)
     }
@@ -85,7 +96,7 @@ export class TextLayerRenderer {
     style.left = position.left
     style.top = position.top
     style.textAlign = "center"
-    style.maxWidth = "200px"
+    style.whiteSpace = "nowrap"
 
     style.fontFamily = textStyle.fontFamily
     style.fontSize = textStyle.fontSize
@@ -93,6 +104,8 @@ export class TextLayerRenderer {
     style.lineHeight = textStyle.lineHeight
     style.color = textStyle.color
     style.textShadow = textStyle.textShadow
+
+    style.padding = `${textPadding.top}px ${textPadding.right}px ${textPadding.bottom}px ${textPadding.left}px`
   }
 
   getElementBBox(element, position) {
@@ -107,10 +120,24 @@ export class TextLayerRenderer {
     }
 
     return {
-      minX: position.x,
-      minY: position.y,
-      maxX: position.x + width,
-      maxY: position.y + height,
+      minX: Math.floor(position.x) - width / 2,
+      minY: Math.floor(position.y) - height / 2,
+      maxX: Math.ceil(position.x + width / 2),
+      maxY: Math.ceil(position.y + height / 2),
     }
+  }
+
+  getCollisionBoxElement(bbox) {
+    const element = document.createElement("div")
+    const style = element.style
+
+    style.position = "absolute"
+    style.left = `${bbox.minX}px`
+    style.top = `${bbox.minY}px`
+    style.width = `${bbox.maxX - bbox.minX}px`
+    style.height = `${bbox.maxY - bbox.minY}px`
+    style.border = "1px solid black"
+
+    return element
   }
 }

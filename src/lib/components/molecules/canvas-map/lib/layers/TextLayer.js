@@ -5,11 +5,12 @@ import { combineExtents } from "../util/extent"
 import EventType from "../events/EventType"
 
 export class TextLayer {
-  constructor({ source, style, minZoom = 0, declutter = true }) {
+  constructor({ source, style, minZoom = 0, declutter = true, drawCollisionBoxes = false }) {
     this.source = source
     this._style = style
     this.minZoom = minZoom
     this.declutter = declutter
+    this.drawCollisionBoxes = drawCollisionBoxes
     this.renderer = new TextLayerRenderer(this)
     this.dispatcher = new Dispatcher(this)
   }
