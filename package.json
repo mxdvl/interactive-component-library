@@ -107,7 +107,7 @@
     "preact": "^10.12.1"
   },
   "lint-staged": {
-    "*.{js,jsx}": "eslint --fix \"src/**/*.{js,jsx}\"",
+    "*.{js,jsx}": "eslint --fix",
     "*.{js,jsx,json,css,scss,md}": "prettier --write"
   }
 }

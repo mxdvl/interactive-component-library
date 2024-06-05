@@ -1,8 +1,11 @@
 import { useState, useCallback, useMemo } from "preact/hooks"
 import { Chevron } from "$particles"
-import styles from "./style.module.css"
+import { mergeStyles } from "$styles/helpers/mergeStyles"
+import defaultStyles from "./style.module.css"
 
-export function Dropdown({ title, hint, options, onSelect, collapseOnSelect = false, expandByDefault = true }) {
+export function Dropdown({ title, hint, options, onSelect, collapseOnSelect = false, expandByDefault = true, styles }) {
+  styles = mergeStyles(defaultStyles, styles)
+
   const [expanded, setExpanded] = useState(expandByDefault)
   const [selectedIndex, setSelectedIndex] = useState(0)
 
@@ -50,7 +53,7 @@ export function Dropdown({ title, hint, options, onSelect, collapseOnSelect = fa
         <span className={styles.title}>{title}</span>
         <Chevron active={true} size="large" direction={expanded ? "up" : "down"} />
       </button>
-
+      <div className={styles.clearFix} />
       <div className={styles.popout} style={{ visibility: expanded ? "visible" : "hidden" }}>
         {hint && <p className={styles.hint}>{hint}</p>}
         {optionGroups.map((group) => (
@@ -92,7 +95,7 @@ function Checkmark() {
         fill-rule="evenodd"
         clip-rule="evenodd"
         d="M0.631814 4.43687L0.0839844 4.9847L2.82313 8.8195H3.08335L10.9173 0.711624L10.3695 0.17749L3.08335 6.77884L0.631814 4.43687Z"
-        className={styles.checkmarkPath}
+        className={defaultStyles.checkmarkPath}
       />
     </svg>
   )
