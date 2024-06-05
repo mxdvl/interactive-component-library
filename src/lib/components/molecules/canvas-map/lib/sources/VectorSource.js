@@ -1,4 +1,5 @@
-import Flatbush from "flatbush"
+import RBush from "rbush"
+import knn from "rbush-knn"
 
 export class VectorSource {
   constructor({ features }) {
@@ -11,22 +12,27 @@ export class VectorSource {
 
   getFeaturesAtCoordinate(coordinate) {
     const [lon, lat] = coordinate
-    return this._featuresRtree.neighbors(lon, lat, 1, Infinity, (i) => this._features[i].containsCoordinate(coordinate)).map((i) => this._features[i])
+    return knn(this._featuresRtree, lon, lat, 1, (d) => d.feature.containsCoordinate(coordinate)).map((d) => d.feature)
   }
 
   getFeaturesInExtent(extent) {
     const [minX, minY, maxX, maxY] = extent
-    return this._featuresRtree.search(minX, minY, maxX, maxY).map((i) => this._features[i])
+    return this._featuresRtree.search({ minX, minY, maxX, maxY }).map((d) => d.feature)
   }
 
   setFeatures(features) {
     // create spatial index
-    let index = new Flatbush(features.length)
+    let index = new RBush()
     for (const feature of features) {
       const [minX, minY, maxX, maxY] = feature.getExtent()
-      index.add(Math.floor(minX), Math.floor(minY), Math.ceil(maxX), Math.ceil(maxY))
+      index.insert({
+        minX: Math.floor(minX),
+        minY: Math.floor(minY),
+        maxX: Math.ceil(maxX),
+        maxY: Math.ceil(maxY),
+        feature,
+      })
     }
-    index.finish()
 
     this._features = features
     this._featuresRtree = index

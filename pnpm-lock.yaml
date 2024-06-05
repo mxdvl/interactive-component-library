@@ -16,9 +16,6 @@ dependencies:
   dayjs:
     specifier: ^1.11.10
     version: 1.11.10
-  flatbush:
-    specifier: ^4.4.0
-    version: 4.4.0
   preact:
     specifier: ^10.12.1
     version: 10.12.1
@@ -26,6 +23,9 @@ dependencies:
     specifier: ^1.4.1
     version: 1.4.1(preact@10.12.1)
   rbush:
+    specifier: ^3.0.1
+    version: 3.0.1
+  rbush-knn:
     specifier: ^3.0.1
     version: 3.0.1
 
@@ -6531,17 +6531,6 @@ packages:
       rimraf: 3.0.2
     dev: true
 
-  /flatbush@4.4.0:
-    resolution: {integrity: sha512-cf6G+sfy/+/FLH7Ls1URQ5GCRlXgwgqUZiEsMNrMZqb3Us3EkKmzUlKbnyoBy/4wI4oLJ+8cyCQoKJIVm92Fmg==}
-    dependencies:
-      flatqueue: 2.0.3
-    dev: false
-
-  /flatqueue@2.0.3:
-    resolution: {integrity: sha512-RZCWZNkmxzUOh8jqEcEGZCycb3B8KAfpPwg3H//cURasunYxsg1eIvE+QDSjX+ZPHTIVfINfK1aLTrVKKO0i4g==}
-    engines: {node: '>= 12.17.0'}
-    dev: false
-
   /flatted@3.2.7:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
     dev: true
@@ -8870,6 +8859,12 @@ packages:
       unpipe: 1.0.0
     dev: true
 
+  /rbush-knn@3.0.1:
+    resolution: {integrity: sha512-nuehTm0Q8yR6nvu3XjoWnZVGK5QqqRHNWogRIjBEBcPgsq3pbiuvWuq0/e/1uL43fXNtDUv93kYZDStZonBetQ==}
+    dependencies:
+      tinyqueue: 2.0.3
+    dev: false
+
   /rbush@3.0.1:
     resolution: {integrity: sha512-XRaVO0YecOpEuIvbhbpTrZgoiI6xBlz6hnlr6EHhd+0x9ase6EmeN+hdwwUaJvLcsFFQ8iWVF1GAK1yB0BWi0w==}
     dependencies:
@@ -9920,6 +9915,10 @@ packages:
     resolution: {integrity: sha512-zSYNUlYSMhJ6Zdou4cJwo/p7w5nmAH17GRfU/ui3ctvjXFErXXkruT4MWW6poDeXgCaIBlGLrfU6TbTXxyGMww==}
     engines: {node: '>=14.0.0'}
     dev: true
+
+  /tinyqueue@2.0.3:
+    resolution: {integrity: sha512-ppJZNDuKGgxzkHihX8v9v9G5f+18gzaTfrukGrq6ueg0lmH4nqVnA2IPG0AEH3jKEk2GRJCUhDoqpoiw3PHLBA==}
+    dev: false
 
   /tinyspy@2.1.1:
     resolution: {integrity: sha512-XPJL2uSzcOyBMky6OFrusqWlzfFrXtE0hPuMgW8A2HmaqrPo4ZQHRN/V0QXN3FSjKxpsbRrFc5LI7KOwBsT1/w==}
