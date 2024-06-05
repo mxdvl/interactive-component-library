@@ -1,4 +1,5 @@
 import { replaceChildren } from "../util/dom"
+import RBush from "rbush"
 
 export class MapRenderer {
   constructor(map) {
@@ -17,17 +18,35 @@ export class MapRenderer {
   }
 
   renderFrame(frameState) {
+    const { zoomLevel } = frameState.viewState
+
     const layers = this.map.layers
 
     const mapElements = []
     let previousElement = null
-    for (const layer of layers) {
-      const element = layer.renderFrame(frameState, previousElement)
 
+    const visibleLayers = layers.filter((layer) => {
+      return zoomLevel > (layer.minZoom || 0)
+    })
+
+    const renderLayer = (layer, declutterTree) => {
+      const element = layer.renderFrame({ ...frameState, declutterTree }, previousElement)
       if (element !== previousElement) {
         mapElements.push(element)
         previousElement = element
       }
+    }
+
+    const baseLayers = visibleLayers.filter((layer) => !layer.declutter)
+    for (const layer of baseLayers) {
+      renderLayer(layer)
+    }
+
+    const declutterTree = new RBush()
+
+    const layersToDeclutter = [...visibleLayers].filter((layer) => !!layer.declutter).reverse()
+    for (const layer of layersToDeclutter) {
+      renderLayer(layer, declutterTree)
     }
 
     replaceChildren(this._element, mapElements)

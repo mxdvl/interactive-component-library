@@ -41,7 +41,8 @@
     "d3-transition": "^3.0.1",
     "dayjs": "^1.11.10",
     "flatbush": "^4.4.0",
-    "preact-transitioning": "^1.4.1"
+    "preact-transitioning": "^1.4.1",
+    "rbush": "^3.0.1"
   },
   "devDependencies": {
     "@babel/core": "7.22.10",

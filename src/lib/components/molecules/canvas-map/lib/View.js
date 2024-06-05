@@ -134,6 +134,7 @@ export class View {
     return {
       transform,
       projection,
+      zoomLevel: transform.k,
       pixelRatio: this.pixelRatio,
       padding: this.padding,
       sizeInPixels: scaleSize(this.viewPortSize, this.pixelRatio),

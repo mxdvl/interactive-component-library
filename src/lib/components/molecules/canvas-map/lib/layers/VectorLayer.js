@@ -5,9 +5,10 @@ import { Dispatcher } from "../events/dispatcher"
 import EventType from "../events/EventType"
 
 export class VectorLayer {
-  constructor({ source, style, hitDetectionEnabled = true }) {
+  constructor({ source, style, minZoom = 0, hitDetectionEnabled = true }) {
     this.source = source
     this._style = style
+    this.minZoom = minZoom
     this.hitDetectionEnabled = hitDetectionEnabled
     this.renderer = new VectorLayerRenderer(this)
     this.dispatcher = new Dispatcher(this)
