@@ -26,6 +26,11 @@ export const Map = forwardRef(({ config, children }, ref) => {
     }
   }, [])
 
+  useEffect(() => {
+    if (!map) return
+    map.setLayers(layers)
+  }, [map, layers])
+
   const targetRef = useRef()
 
   return (

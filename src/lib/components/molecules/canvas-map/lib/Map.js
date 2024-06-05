@@ -72,6 +72,20 @@ export class Map {
         this._requestRender()
       })
     })
+
+    this._requestRender()
+  }
+
+  setLayers(layers) {
+    if (layers === this.layers) {
+      return
+    }
+
+    ;[...this.layers].forEach((layer) => {
+      this.removeLayer(layer)
+    })
+
+    this.addLayers(layers)
   }
 
   removeLayer(layer) {
