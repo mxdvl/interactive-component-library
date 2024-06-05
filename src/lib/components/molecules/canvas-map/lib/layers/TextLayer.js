@@ -1,6 +1,6 @@
 import { TextLayerRenderer } from "../renderers/TextLayerRenderer"
 import { Style, Text } from "../styles"
-import { Dispatcher } from "../events/dispatcher"
+import { Dispatcher } from "../events/Dispatcher"
 import { combineExtents } from "../util/extent"
 import EventType from "../events/EventType"
 

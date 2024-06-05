@@ -23,7 +23,7 @@ export class Polygon {
 
     return {
       type: this.type,
-      coordinates: projected, //[this.coordinates.map((point) => projection(point))],
+      coordinates: projected,
     }
   }
 

@@ -1,7 +1,7 @@
 import { VectorLayerRenderer } from "../renderers/VectorLayerRenderer"
 import { Style, Stroke } from "../styles"
 import { combineExtents } from "../util/extent"
-import { Dispatcher } from "../events/dispatcher"
+import { Dispatcher } from "../events/Dispatcher"
 import EventType from "../events/EventType"
 
 export class VectorLayer {
