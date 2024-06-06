@@ -3,8 +3,14 @@ import { Style, Stroke } from "../styles"
 import { combineExtents } from "../util/extent"
 import { Dispatcher } from "../events/Dispatcher"
 import EventType from "../events/EventType"
+import { VectorSource } from "../sources/VectorSource"
 
 export class VectorLayer {
+  static with(features, options) {
+    const source = new VectorSource({ features })
+    return new VectorLayer({ source, ...options })
+  }
+
   constructor({ source, style, minZoom = 0, hitDetectionEnabled = true }) {
     this.source = source
     this._style = style
