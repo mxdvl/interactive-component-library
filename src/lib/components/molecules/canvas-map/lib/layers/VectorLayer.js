@@ -30,12 +30,13 @@ export class VectorLayer {
     this._source = source
 
     source.on(EventType.CHANGE, () => {
+      this._extent = null
       this.dispatcher.dispatch(EventType.CHANGE)
     })
   }
 
   tearDown() {
-    // this.dispatcher = null
+    this.dispatcher = null
   }
 
   get style() {

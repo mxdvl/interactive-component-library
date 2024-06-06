@@ -31,6 +31,14 @@ export class Polygon {
     return this.coordinates[0]
   }
 
+  setOuterRing(coordinates) {
+    this.coordinates[0] = coordinates
+  }
+
+  setCoordinates(coordinates) {
+    this.coordinates = coordinates
+  }
+
   getGeoJSON() {
     return {
       type: this.type,

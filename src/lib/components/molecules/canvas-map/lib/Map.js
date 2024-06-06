@@ -83,9 +83,12 @@ export class Map {
     }
 
     ;[...this.layers].forEach((layer) => {
-      this.removeLayer(layer)
+      if (!layers.includes(layer)) {
+        this.removeLayer(layer)
+      }
     })
 
+    this.layers = []
     this.addLayers(layers)
   }
 
