@@ -4,7 +4,8 @@ import { containsCoordinate } from "./util/extent"
 import { MapRenderer } from "./renderers/MapRenderer"
 import { zoom, zoomIdentity } from "d3-zoom"
 import { select } from "d3-selection"
-import EventType from "./events/EventType"
+import { timer } from "d3-timer"
+import { EventType } from "./events"
 import "d3-transition"
 
 export class Map {
@@ -138,6 +139,19 @@ export class Map {
     this._requestRender()
   }
 
+  transition(options = { duration: 500 }, callback) {
+    this._isTransitioning = true
+    const _timer = timer((elapsed) => {
+      const t = Math.min(elapsed / options.duration, 1)
+      callback(t)
+      this._renderFrame()
+      if (elapsed >= options.duration) {
+        _timer.stop()
+        this._isTransitioning = false
+      }
+    })
+  }
+
   /** PRIVATE METHODS */
 
   _updateSize() {
@@ -187,7 +201,7 @@ export class Map {
   }
 
   _requestRender() {
-    if (!this._renderer || !!this._animationFrameRequestID) return
+    if (!this._renderer || !!this._animationFrameRequestID || this._isTransitioning) return
     this._animationFrameRequestID = requestAnimationFrame(this._renderFrame.bind(this))
   }
 

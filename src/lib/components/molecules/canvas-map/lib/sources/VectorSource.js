@@ -1,9 +1,18 @@
 import RBush from "rbush"
 import knn from "rbush-knn"
+import { Dispatcher, EventType } from "../events"
 
 export class VectorSource {
   constructor({ features }) {
+    this.dispatcher = new Dispatcher(this)
+
+    // create spatial index
+    this._featuresRtree = new RBush()
     this.setFeatures(features)
+  }
+
+  tearDown() {
+    this.dispatcher = null
   }
 
   getFeatures() {
@@ -21,11 +30,11 @@ export class VectorSource {
   }
 
   setFeatures(features) {
-    // create spatial index
-    let index = new RBush()
+    this._featuresRtree.clear()
+
     for (const feature of features) {
       const [minX, minY, maxX, maxY] = feature.getExtent()
-      index.insert({
+      this._featuresRtree.insert({
         minX: Math.floor(minX),
         minY: Math.floor(minY),
         maxX: Math.ceil(maxX),
@@ -35,6 +44,6 @@ export class VectorSource {
     }
 
     this._features = features
-    this._featuresRtree = index
+    this.dispatcher.dispatch(EventType.CHANGE)
   }
 }

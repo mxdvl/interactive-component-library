@@ -27,11 +27,19 @@ export class Polygon {
     }
   }
 
+  getOuterRing() {
+    return this.coordinates[0]
+  }
+
   getGeoJSON() {
     return {
       type: this.type,
       coordinates: this.coordinates,
     }
+  }
+
+  clone() {
+    return new Polygon({ extent: this.extent, coordinates: this.coordinates })
   }
 }
 

@@ -2,7 +2,7 @@ import { TextLayerRenderer } from "../renderers/TextLayerRenderer"
 import { Style, Text } from "../styles"
 import { Dispatcher } from "../events/Dispatcher"
 import { combineExtents } from "../util/extent"
-import EventType from "../events/EventType"
+import { EventType } from "../events"
 
 export class TextLayer {
   constructor({ source, style, minZoom = 0, declutter = true, drawCollisionBoxes = false }) {

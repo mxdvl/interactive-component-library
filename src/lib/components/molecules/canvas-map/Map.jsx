@@ -27,8 +27,9 @@ export const Map = forwardRef(({ config, children }, ref) => {
   }, [])
 
   useEffect(() => {
-    if (!map) return
-    map.setLayers(layers)
+    if (map && layers !== map.layers) {
+      map.setLayers(layers)
+    }
   }, [map, layers])
 
   const targetRef = useRef()

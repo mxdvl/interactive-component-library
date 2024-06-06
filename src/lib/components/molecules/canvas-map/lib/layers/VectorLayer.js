@@ -1,8 +1,7 @@
 import { VectorLayerRenderer } from "../renderers/VectorLayerRenderer"
 import { Style, Stroke } from "../styles"
 import { combineExtents } from "../util/extent"
-import { Dispatcher } from "../events/Dispatcher"
-import EventType from "../events/EventType"
+import { Dispatcher, EventType } from "../events"
 import { VectorSource } from "../sources/VectorSource"
 
 export class VectorLayer {
@@ -12,16 +11,31 @@ export class VectorLayer {
   }
 
   constructor({ source, style, minZoom = 0, hitDetectionEnabled = true }) {
+    this.dispatcher = new Dispatcher(this)
+    this.renderer = new VectorLayerRenderer(this)
     this.source = source
     this._style = style
     this.minZoom = minZoom
     this.hitDetectionEnabled = hitDetectionEnabled
-    this.renderer = new VectorLayerRenderer(this)
-    this.dispatcher = new Dispatcher(this)
+  }
+
+  get source() {
+    return this._source
+  }
+
+  set source(source) {
+    if (this._source && source !== this._source) {
+      this._source.tearDown()
+    }
+    this._source = source
+
+    source.on(EventType.CHANGE, () => {
+      this.dispatcher.dispatch(EventType.CHANGE)
+    })
   }
 
   tearDown() {
-    this.dispatcher = null
+    // this.dispatcher = null
   }
 
   get style() {

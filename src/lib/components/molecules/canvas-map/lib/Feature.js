@@ -11,8 +11,6 @@ export class Feature {
 
     // create a unique ID for this feature
     this.uid = createUid()
-
-    this._projectedGeometry = null
   }
 
   getExtent() {
@@ -24,6 +22,11 @@ export class Feature {
     }, null)
     this._extent = extent
     return extent
+  }
+
+  setGeometries(geometries) {
+    this.geometries = geometries
+    this._extent = undefined
   }
 
   getProjectedGeometries(projection) {
@@ -51,5 +54,14 @@ export class Feature {
     }
 
     return false
+  }
+
+  clone() {
+    return new Feature({
+      id: this.id,
+      geometries: this.geometries,
+      properties: this.properties,
+      style: this.style,
+    })
   }
 }
