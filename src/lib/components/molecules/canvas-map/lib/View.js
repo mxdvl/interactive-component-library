@@ -20,17 +20,7 @@ export class View {
     this._viewPortSize = size
 
     if (previousSize !== size) {
-      const [width, height] = this.mapSize
-      const { left, top } = this.scaledPadding
-
-      this.projection.fitExtent(
-        [
-          [left, top],
-          [width, height],
-        ],
-        bboxFeature(this.extent),
-      )
-      ++this.projection.revision
+      this.fitObject(bboxFeature(this.extent))
     }
   }
 
@@ -64,6 +54,11 @@ export class View {
   // defines the upper and lower limits for zoom behaviour
   get scaleExtent() {
     return [this.minZoom, this.maxZoom]
+  }
+
+  setProjection(projection) {
+    this.projection = projection
+    this.fitObject(bboxFeature(this.extent))
   }
 
   fitObject(geoJSON) {
