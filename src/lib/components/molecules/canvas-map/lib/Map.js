@@ -19,6 +19,8 @@ export class Map {
     this._viewport = document.createElement("div")
     this._viewport.style.position = "relative"
     this._viewport.style.overflow = "hidden"
+    this._viewport.style.top = 0
+    this._viewport.style.left = 0
     this._viewport.style.width = "100%"
     this._viewport.style.height = "100%"
     this.target.appendChild(this._viewport)
@@ -38,6 +40,7 @@ export class Map {
       .scaleExtent(this.view.scaleExtent)
       .filter((event) => {
         if (event.type === "wheel" && !event[this._zoomBypassKey]) {
+          this._filterEventCallback(this._zoomBypassKey)
           return false
         }
 
@@ -47,6 +50,9 @@ export class Map {
       .on("zoom", (event) => {
         this.view.transform = event.transform
         this._requestRender()
+        if (this._onZoomEventCallback) {
+          this._onZoomEventCallback(event.transform.k)
+        }
       })
 
     // Add zoom behaviour to viewport
@@ -68,6 +74,14 @@ export class Map {
   }
 
   /** PUBLIC METHODS */
+
+  onFilterEvent(callback) {
+    this._filterEventCallback = callback
+  }
+
+  onZoomEvent(callback) {
+    this._onZoomEventCallback = callback
+  }
 
   fitObject(geoJSON) {
     this.view.fitObject(geoJSON)
