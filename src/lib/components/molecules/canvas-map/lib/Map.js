@@ -54,6 +54,10 @@ export class Map {
     return this._viewport
   }
 
+  get zoomLevel() {
+    return this.view.transform.k
+  }
+
   /** PUBLIC METHODS */
 
   fitObject(geoJSON) {
@@ -99,15 +103,19 @@ export class Map {
     this.layers.splice(layerIndex, 1)
   }
 
-  zoomIn() {
-    select(this._viewport).transition().duration(500).call(this._zoomBehaviour.scaleBy, 2)
+  async zoomIn(options) {
+    return this.zoomTo(this.zoomLevel * 2, options)
   }
 
-  zoomOut() {
-    select(this._viewport).transition().duration(500).call(this._zoomBehaviour.scaleBy, 0.5)
+  async zoomOut(options) {
+    return this.zoomTo(this.zoomLevel * 0.5, options)
   }
 
-  zoomTo(feature, focalPoint) {
+  async zoomTo(zoomLevel, options = { duration: 500 }) {
+    return select(this._viewport).transition().duration(options.duration).call(this._zoomBehaviour.scaleTo, zoomLevel).end()
+  }
+
+  zoomToFeature(feature, focalPoint) {
     const extent = feature.getExtent()
     const [[x, y], [width, height]] = this.view.boundsForExtent(extent)
     const viewPortSize = this.view.viewPortSize
@@ -118,6 +126,10 @@ export class Map {
       .translate(-x - width / 2, -y - height / 2)
 
     select(this._viewport).transition().duration(500).call(this._zoomBehaviour.transform, newTransform, focalPoint)
+  }
+
+  async resetZoom(options) {
+    return this.zoomTo(1, options)
   }
 
   findFeatures(point) {
