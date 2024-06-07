@@ -21,6 +21,9 @@ export class VectorLayerRenderer {
     context.lineJoin = "round"
     context.lineCap = "round"
 
+    // set opacity
+    context.globalAlpha = this.layer.opacity
+
     const source = this.layer.source
     const features = source.getFeaturesInExtent(visibleExtent)
 

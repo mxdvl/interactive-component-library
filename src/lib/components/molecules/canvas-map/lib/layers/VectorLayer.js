@@ -10,12 +10,13 @@ export class VectorLayer {
     return new VectorLayer({ source, ...options })
   }
 
-  constructor({ source, style, minZoom = 0, hitDetectionEnabled = true }) {
+  constructor({ source, style, minZoom = 0, opacity = 1, hitDetectionEnabled = true }) {
     this.dispatcher = new Dispatcher(this)
     this.renderer = new VectorLayerRenderer(this)
     this.source = source
     this._style = style
     this.minZoom = minZoom
+    this.opacity = opacity
     this.hitDetectionEnabled = hitDetectionEnabled
   }
 
