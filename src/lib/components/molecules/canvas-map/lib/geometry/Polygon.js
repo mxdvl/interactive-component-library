@@ -47,7 +47,10 @@ export class Polygon {
   }
 
   clone() {
-    return new Polygon({ extent: this.extent, coordinates: this.coordinates })
+    return new Polygon({
+      extent: this.extent,
+      coordinates: JSON.parse(JSON.stringify(this.coordinates)),
+    })
   }
 }
 

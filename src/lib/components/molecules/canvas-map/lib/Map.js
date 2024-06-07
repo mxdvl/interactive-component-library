@@ -142,16 +142,21 @@ export class Map {
     this._requestRender()
   }
 
-  transition(options = { duration: 500 }, callback) {
-    this._isTransitioning = true
-    const _timer = timer((elapsed) => {
-      const t = Math.min(elapsed / options.duration, 1)
-      callback(t)
-      this._renderFrame()
-      if (elapsed >= options.duration) {
-        _timer.stop()
-        this._isTransitioning = false
-      }
+  async transition(options = { duration: 500 }, callback) {
+    const ease = options.ease || ((t) => t)
+    return new Promise((resolve) => {
+      this._isTransitioning = true
+
+      const _timer = timer((elapsed) => {
+        const t = Math.min(elapsed / options.duration, 1)
+        callback(ease(t))
+        this._renderFrame()
+        if (elapsed >= options.duration) {
+          _timer.stop()
+          this._isTransitioning = false
+          resolve()
+        }
+      })
     })
   }
 

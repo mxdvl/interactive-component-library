@@ -59,7 +59,7 @@ export class Feature {
   clone() {
     return new Feature({
       id: this.id,
-      geometries: this.geometries,
+      geometries: this.geometries.map((d) => d.clone()),
       properties: this.properties,
       style: this.style,
     })
