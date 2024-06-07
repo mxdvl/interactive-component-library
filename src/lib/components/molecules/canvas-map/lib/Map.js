@@ -33,8 +33,17 @@ export class Map {
 
     // Create d3-zoom object to allow panning and zooming
     this.view.transform = zoomIdentity
+    this._zoomBypassKey = navigator.userAgent.indexOf("Mac") !== -1 ? "metaKey" : "ctrlKey"
     this._zoomBehaviour = zoom()
       .scaleExtent(this.view.scaleExtent)
+      .filter((event) => {
+        if (event.type === "wheel" && !event[this._zoomBypassKey]) {
+          return false
+        }
+
+        // default to d3 implementation
+        return (!event.ctrlKey || event.type === "wheel") && !event.button
+      })
       .on("zoom", (event) => {
         this.view.transform = event.transform
         this._requestRender()
