@@ -3,8 +3,14 @@ import { Style, Text } from "../styles"
 import { Dispatcher } from "../events/Dispatcher"
 import { combineExtents } from "../util/extent"
 import { EventType } from "../events"
+import { VectorSource } from "../sources/VectorSource"
 
 export class TextLayer {
+  static with(features, options) {
+    const source = new VectorSource({ features })
+    return new TextLayer({ source, ...options })
+  }
+
   constructor({ source, style, minZoom = 0, declutter = true, drawCollisionBoxes = false }) {
     this.source = source
     this._style = style
