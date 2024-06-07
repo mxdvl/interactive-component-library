@@ -27,6 +27,9 @@ export class TextLayerRenderer {
     const { declutterTree } = frameState
     const { projection, sizeInPixels, visibleExtent, transform } = frameState.viewState
 
+    // set opacity
+    this._element.style.opacity = this.layer.opacity
+
     const source = this.layer.source
     const features = source.getFeaturesInExtent(visibleExtent)
 
