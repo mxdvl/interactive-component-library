@@ -42,7 +42,7 @@
 .zoomControl {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 10px;
   z-index: 10;
 
   @include mq($from: leftCol) {
