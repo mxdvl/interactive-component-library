@@ -3,7 +3,7 @@ import { forwardRef } from "preact/compat"
 import { Map as _Map } from "./lib/Map"
 import { View } from "./lib/View"
 import { ZoomControl } from "./controls"
-import styles from "./style.module.css"
+import styles from "./style.module.scss"
 
 export const Map = forwardRef(({ config, children }, ref) => {
   const { controls, layers } = children
