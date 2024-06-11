@@ -76,16 +76,19 @@ export class View {
     ++this.projection.revision
   }
 
+  // returns bounds relative to the viewport
   boundsForExtent(extent) {
     const SW = this.projection([extent[0], extent[1]])
     const NE = this.projection([extent[2], extent[3]])
-    const minX = SW[0]
-    const minY = NE[1]
-    const maxX = NE[0]
-    const maxY = SW[1]
+    const minX = SW[0] / this.pixelRatio
+    const minY = NE[1] / this.pixelRatio
+    const maxX = NE[0] / this.pixelRatio
+    const maxY = SW[1] / this.pixelRatio
+    const width = maxX - minX
+    const height = maxY - minY
     return [
       [minX, minY],
-      [maxX - minX, maxY - minY],
+      [width, height],
     ]
   }
 
