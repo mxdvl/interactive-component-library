@@ -39,8 +39,14 @@ export class Map {
     this._zoomBehaviour = zoom()
       .scaleExtent(this.view.scaleExtent)
       .filter((event) => {
+        // only allow wheel events when zoom bypass key is pressed
         if (event.type === "wheel" && !event[this._zoomBypassKey]) {
           this._filterEventCallback(this._zoomBypassKey)
+          return false
+        }
+
+        if ("targetTouches" in event && event.targetTouches.length < 2) {
+          console.log("stop event", event)
           return false
         }
 

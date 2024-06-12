@@ -28,6 +28,7 @@
   line-height: var(--sans-line-height);
   color: #a1a1a1 !important;
   transition: all 0.2s linear;
+  margin-bottom: var(--space-3);
 }
 
 .highlight {
@@ -41,7 +42,7 @@
 
 .zoomControl {
   position: absolute;
-  top: 0;
+  top: var(--space-10);
   right: 10px;
   z-index: 10;
 

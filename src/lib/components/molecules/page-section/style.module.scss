@@ -97,9 +97,14 @@
 }
 
 .header.fullWidth {
-  position: static;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
   transform: none;
+  padding-top: 0;
   margin-bottom: var(--space-2);
+  max-width: 100%;
 
   @include mq($from: leftCol) {
     margin-bottom: 0;
@@ -128,6 +133,10 @@
             z-index: -2;
         }
     }
+}
+
+.content.fullWidth {
+  padding-top: 0;
 }
 
 .content.fullWidth::before {
