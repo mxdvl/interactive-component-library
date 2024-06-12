@@ -61,17 +61,13 @@ export class View {
     this.fitObject(bboxFeature(this.extent))
   }
 
-  fitObject(geoJSON) {
-    const [width, height] = this.mapSize
-    const { left, top } = this.scaledPadding
+  // only set the raw projection when it has already been configured with projection.fitExtent()
+  setRawProjection(projection) {
+    this.projection = projection
+  }
 
-    this.projection.fitExtent(
-      [
-        [left, top],
-        [width, height],
-      ],
-      geoJSON,
-    )
+  fitObject(geoJSON) {
+    this.projection.fitExtent(this.getMapExtent(), geoJSON)
 
     ++this.projection.revision
   }
@@ -115,6 +111,16 @@ export class View {
     const bottomLeft = [bounds[0][0], bounds[1][1]]
     const points = [topLeft, topRight, bottomRight, bottomLeft, topLeft]
     return points.map((d) => this.invert(d))
+  }
+
+  // get extent for drawn map
+  getMapExtent() {
+    const [width, height] = this.mapSize
+    const { left, top } = this.scaledPadding
+    return [
+      [left, top],
+      [width, height],
+    ]
   }
 
   // visible extent in map coordinates
