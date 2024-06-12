@@ -18,7 +18,7 @@ export class MapRenderer {
   }
 
   renderFrame(frameState) {
-    const { zoomLevel } = frameState.viewState
+    const { zoomLevel, projection } = frameState.viewState
 
     const layers = this.map.layers
 
@@ -30,11 +30,20 @@ export class MapRenderer {
     })
 
     const renderLayer = (layer, declutterTree) => {
-      const element = layer.renderFrame({ ...frameState, declutterTree }, previousElement)
+      const viewState = frameState.viewState
+      // set layer projection if applicable
+      if (layer.projection) {
+        viewState.projection = layer.projection
+      }
+
+      const element = layer.renderFrame({ ...frameState, viewState, declutterTree }, previousElement)
       if (element !== previousElement) {
         mapElements.push(element)
         previousElement = element
       }
+
+      // reset to map projection
+      viewState.projection = projection
     }
 
     const baseLayers = visibleLayers.filter((layer) => !layer.declutter)

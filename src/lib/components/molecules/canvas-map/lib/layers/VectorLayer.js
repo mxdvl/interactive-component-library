@@ -36,6 +36,10 @@ export class VectorLayer {
     })
   }
 
+  setRawProjection(projection) {
+    this.projection = projection
+  }
+
   tearDown() {
     this.dispatcher = null
   }
