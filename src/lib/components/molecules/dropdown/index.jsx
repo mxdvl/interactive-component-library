@@ -3,25 +3,70 @@ import { Chevron } from "$particles"
 import { mergeStyles } from "$styles/helpers/mergeStyles"
 import defaultStyles from "./style.module.css"
 
-export function Dropdown({ title, hint, options, onSelect, collapseOnSelect = false, expandByDefault = true, styles }) {
+export function Dropdown({ title, hint, options, onSelect, multipleSelect = false, iconForSelectedIndexPaths, collapseOnSelect = false, expandByDefault = true, styles }) {
   styles = mergeStyles(defaultStyles, styles)
 
+  const optionGroups = useMemo(() => {
+    const containsOptionGroups = "options" in options[0]
+    if (!containsOptionGroups) {
+      // create single option group
+      options.forEach((option, index) => {
+        option.index = index
+      })
+      return [{ group: 0, options }]
+    }
+
+    for (const [groupIndex, group] of options.entries()) {
+      for (const [optionIndex, option] of group.options.entries()) {
+        option.group = groupIndex
+        option.index = optionIndex
+      }
+      group.index = groupIndex
+    }
+
+    return options
+  }, options)
+
   const [expanded, setExpanded] = useState(expandByDefault)
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [selectedIndexPaths, setSelectedIndexPaths] = useState(() => createInitialIndexPaths(optionGroups, multipleSelect))
 
   const onOptionClick = useCallback(
     (option, index) => {
-      setSelectedIndex(index)
-      if (onSelect) onSelect(option, index)
+      const indexPath = [option.group, index]
+      if (multipleSelect) {
+        setSelectedIndexPaths((selectedIndexPaths) => {
+          selectedIndexPaths[option.group] = indexPath
+          return [...selectedIndexPaths]
+        })
+      } else {
+        setSelectedIndexPaths([indexPath])
+      }
+      if (onSelect) onSelect(option, indexPath)
       if (collapseOnSelect) setExpanded(false)
     },
-    [onSelect],
+    [onSelect, collapseOnSelect, multipleSelect],
   )
 
   const iconForSelectedOption = useMemo(() => {
-    const selectedOption = options[selectedIndex]
+    if (multipleSelect && iconForSelectedIndexPaths) {
+      return iconForSelectedIndexPaths(selectedIndexPaths)
+    }
+    const firstSelectedIndexPath = selectedIndexPaths[0]
+    const selectedOption = optionGroups[firstSelectedIndexPath[0]].options[firstSelectedIndexPath[1]]
     return selectedOption.icon
-  }, [options, selectedIndex])
+  }, [optionGroups, selectedIndexPaths])
+
+  const selectedIndexForGroup = useCallback(
+    (groupIndex) => {
+      if (multipleSelect) {
+        return selectedIndexPaths[groupIndex][1]
+      } else if (selectedIndexPaths[0][0] === groupIndex) {
+        return selectedIndexPaths[0][1]
+      }
+      return -1
+    },
+    [selectedIndexPaths, multipleSelect],
+  )
 
   return (
     <div className={styles.container}>
@@ -33,22 +78,35 @@ export function Dropdown({ title, hint, options, onSelect, collapseOnSelect = fa
       <div className={styles.clearFix} />
       <div className={styles.popout} style={{ visibility: expanded ? "visible" : "hidden" }}>
         {hint && <p className={styles.hint}>{hint}</p>}
-        {options.map((option, index) => (
-          <button key={option.title} className={styles.option} onClick={() => onOptionClick(option, index)}>
+        {optionGroups.map((group, index) => {
+          return <OptionGroup {...group} selectedIndex={selectedIndexForGroup(index)} onOptionClick={onOptionClick} styles={styles} />
+        })}
+      </div>
+    </div>
+  )
+}
+
+function OptionGroup({ title, className, options, selectedIndex, onOptionClick, styles }) {
+  return (
+    <>
+      {title && <span className={styles.groupHeader}>{title}</span>}
+      {options.map((option) => {
+        return (
+          <button key={option.title} className={[styles.option, className].join(" ")} onClick={() => onOptionClick(option, option.index)}>
             <img src={option.icon} className={styles.optionIcon} />
             <div className={styles.optionText}>
               <h4 className={styles.optionTitle}>{option.title}</h4>
               <p className={styles.optionDescription}>{option.description}</p>
             </div>
-            {index === selectedIndex && (
+            {option.index === selectedIndex && (
               <div className={styles.checkmark}>
                 <Checkmark />
               </div>
             )}
           </button>
-        ))}
-      </div>
-    </div>
+        )
+      })}
+    </>
   )
 }
 
@@ -63,4 +121,12 @@ function Checkmark() {
       />
     </svg>
   )
+}
+
+function createInitialIndexPaths(groups, multipleSelect) {
+  if (multipleSelect) {
+    return groups.map((group) => [group.index, 0])
+  }
+
+  return [[0, 0]]
 }
