@@ -1,6 +1,6 @@
 import { Map, MapConfiguration, MapLayers, Projection, Controls } from "."
 import { feature } from "topojson-client"
-import { useRef, useState, useEffect, useCallback } from "preact/hooks"
+import { useRef, useState, useEffect } from "preact/hooks"
 import { pointer } from "d3-selection"
 // import ukCountriesTopo from './sample-data/UK-countries-topo.json'
 import westminsterConstituenciesTopo from "./sample-data/UK-constituencies-simplified-topo.json"

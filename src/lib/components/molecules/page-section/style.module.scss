@@ -83,20 +83,21 @@
 }
 
 :global(body:not(.ios, .android)) .header {
-    @include mq($from: leftCol) {
-        position: absolute;
-        max-width: 160px;
-        transform: translateX(-170px);
-        margin-bottom: 0;
-    }
-    
-    @include mq($from: wide) {
-        max-width: 220px;
-        transform: translateX(-250px);
-    }
+  @include mq($from: leftCol) {
+    position: absolute;
+    max-width: 160px;
+    transform: translateX(-170px);
+    margin-bottom: 0;
+  }
+
+  @include mq($from: wide) {
+    max-width: 220px;
+    transform: translateX(-250px);
+  }
 }
 
-.header.fullWidth {
+// this :global(body) scope exists to match the specifity of the previous selector
+:global(body) .header.fullWidth {
   position: absolute;
   top: 0;
   left: 0;
@@ -115,24 +116,22 @@
   position: relative;
   padding-top: 0;
   color: var(--primary-text-color);
-}
 
-:global(body:not(.ios, .android)) .content {
-    @include mq($from: leftCol) {
-        padding-top: var(--space-2);
-        
-        &::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform: translateX(-9px);
-            width: calc(100% + 29px);
-            height: calc(100% + var(--space-8));
-            background-color: var(--background-color);
-            z-index: -2;
-        }
+  @include mq($from: leftCol) {
+    padding-top: var(--space-2);
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translateX(-9px);
+      width: calc(100% + 29px);
+      height: calc(100% + var(--space-8));
+      background-color: var(--background-color);
+      z-index: -2;
     }
+  }
 }
 
 .content.fullWidth {
