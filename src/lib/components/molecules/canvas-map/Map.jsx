@@ -9,6 +9,7 @@ export const Map = forwardRef(({ config, children }, ref) => {
   const { controls, layers } = children
 
   const [map, setMap] = useState()
+  const [currentZoomLevel, setCurrentZoomLevel] = useState(1)
   const [hideDefaultHelpText, setHideDefaultHelpText] = useState(false)
   const [zoomHelpText, setZoomHelpText] = useState("")
   const [highlightHelpText, setHighlightHelpText] = useState(false)
@@ -45,6 +46,7 @@ export const Map = forwardRef(({ config, children }, ref) => {
     })
 
     map.onZoomEvent((zoomLevel) => {
+      setCurrentZoomLevel(zoomLevel)
       setHideDefaultHelpText(zoomLevel > 1)
     })
 
@@ -70,7 +72,7 @@ export const Map = forwardRef(({ config, children }, ref) => {
         <p className={[styles.helpText, highlightHelpText && styles.highlight].join(" ")}>{helpText}</p>
       </div>
       <div className={styles.zoomControl}>
-        <ZoomControl onZoomIn={() => map.zoomIn()} onZoomOut={() => map.zoomOut()} />
+        <ZoomControl resetEnabled={currentZoomLevel > 1} onZoomIn={() => map.zoomIn()} onZoomOut={() => map.zoomOut()} onReset={() => map.zoomTo(1)} />
       </div>
     </div>
   )

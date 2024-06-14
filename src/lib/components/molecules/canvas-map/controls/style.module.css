@@ -25,3 +25,8 @@
 .button:hover:enabled {
   background-color: var(--news-grey-05);
 }
+
+.button:disabled {
+  cursor: auto;
+  background-color: var(--tertiary-bg-color);
+}
