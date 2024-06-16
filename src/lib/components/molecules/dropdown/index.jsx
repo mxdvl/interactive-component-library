@@ -91,14 +91,15 @@ function OptionGroup({ title, className, options, selectedIndex, onOptionClick, 
     <>
       {title && <span className={styles.groupHeader}>{title}</span>}
       {options.map((option) => {
+        const isSelected = option.index === selectedIndex
         return (
-          <button key={option.title} className={[styles.option, className].join(" ")} onClick={() => onOptionClick(option, option.index)}>
+          <button key={option.title} className={[styles.option, className, isSelected ? styles.selected : ""].join(" ")} onClick={() => onOptionClick(option, option.index)}>
             <img src={option.icon} className={styles.optionIcon} />
             <div className={styles.optionText}>
               <h4 className={styles.optionTitle}>{option.title}</h4>
               <p className={styles.optionDescription}>{option.description}</p>
             </div>
-            {option.index === selectedIndex && (
+            {isSelected && (
               <div className={styles.checkmark}>
                 <Checkmark />
               </div>

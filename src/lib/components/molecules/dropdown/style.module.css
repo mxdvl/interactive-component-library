@@ -82,6 +82,10 @@
   background-color: var(--primary-bg-color);
 }
 
+.option.selected {
+  border: 1px solid var(--primary-text-color);
+}
+
 .option:hover:enabled {
   background-color: var(--news-grey-05);
   cursor: pointer;
